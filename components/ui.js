@@ -1,5 +1,4 @@
 import { View, Text, StyleSheet } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
 import { colors, radius, spacing, type, shadow } from "../constants/theme";
 
 export function ScreenHeader({ eyebrow, title, right }) {
@@ -14,23 +13,21 @@ export function ScreenHeader({ eyebrow, title, right }) {
   );
 }
 
+// Elevated card for light backgrounds: a hairline border + a soft, low-opacity
+// shadow stand in for the shadow-heavy card the old dark theme used (UX plan 3.4).
 export function GlassCard({ children, style }) {
-  return (
-    <LinearGradient colors={["#20294A", "#161E3A"]} style={[styles.card, shadow.card, style]}>
-      {children}
-    </LinearGradient>
-  );
+  return <View style={[styles.card, shadow.card, style]}>{children}</View>;
 }
 
 export function Badge({ label, tone = "neutral", small }) {
   const palette = {
-    neutral: { bg: colors.surfaceAlt, fg: colors.textMuted },
-    accent: { bg: colors.accentSoft, fg: colors.accent },
-    success: { bg: colors.successSoft, fg: colors.success },
-    semantic: { bg: "#1E2A4A", fg: colors.matchSemantic },
-    bm25: { bg: "#2A1E3A", fg: colors.matchBM25 },
-    exact: { bg: colors.successSoft, fg: colors.matchExact },
-  }[tone] || { bg: colors.surfaceAlt, fg: colors.textMuted };
+    neutral: { bg: colors.backgroundAlt, fg: colors.textSecondary },
+    accent: { bg: colors.tealTint, fg: colors.tealDark },
+    success: { bg: colors.successTint, fg: colors.success },
+    semantic: { bg: colors.tealTintFaint, fg: colors.matchSemantic },
+    keyword: { bg: colors.backgroundAlt, fg: colors.matchKeyword },
+    exact: { bg: colors.successTint, fg: colors.matchExact },
+  }[tone] || { bg: colors.backgroundAlt, fg: colors.textSecondary };
 
   return (
     <View
@@ -57,20 +54,21 @@ const styles = StyleSheet.create({
     marginBottom: spacing.md,
   },
   eyebrow: {
-    color: colors.accent,
+    color: colors.teal,
     ...type.label,
     marginBottom: 4,
     textTransform: "uppercase",
   },
   headerTitle: {
-    color: colors.text,
+    color: colors.textPrimary,
     ...type.display,
   },
   card: {
+    backgroundColor: colors.backgroundAlt,
     borderRadius: radius.lg,
     padding: spacing.md,
     borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.06)",
+    borderColor: colors.hairline,
   },
   badge: {
     borderRadius: radius.pill,
@@ -80,7 +78,7 @@ const styles = StyleSheet.create({
     fontWeight: "700",
   },
   sectionLabel: {
-    color: colors.textFaintSolid,
+    color: colors.textFaint,
     ...type.label,
     textTransform: "uppercase",
     marginBottom: spacing.sm,

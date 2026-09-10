@@ -3,6 +3,8 @@
 // lost keys, lecture notes, receipts) and on real backend terms from the
 // Eykon retrieval prototype (Hit@5, hybrid search, RRF fusion, match badges).
 
+import { colors } from "../constants/theme";
+
 export const EVENT_TYPES = {
   TEXT: "text",       // OCR-heavy: whiteboards, screens, signs
   OBJECT: "object",   // object placement: keys, wallet, tools
@@ -11,14 +13,28 @@ export const EVENT_TYPES = {
   PERSON: "person",   // a person encountered (name + context)
 };
 
+// Type-specific visual identity for Echoes (UX plan, "Memory Gallery"): every
+// event type gets its own treatment so the eye groups them at a glance without
+// reading each card (Gestalt: similarity). Colors route through the theme —
+// nothing here is a hardcoded one-off hex.
+export const TYPE_META = {
+  [EVENT_TYPES.TEXT]: { label: "Text", color: colors.textPrimary, tint: colors.tealTintFaint, icon: "scan-outline" },
+  [EVENT_TYPES.OBJECT]: { label: "Object", color: colors.teal, tint: colors.tealTint, icon: "cube-outline" },
+  [EVENT_TYPES.SCENE]: { label: "Scene", color: colors.tealDark, tint: colors.tealTint, icon: "image-outline" },
+  [EVENT_TYPES.AUDIO]: { label: "Audio", color: colors.teal, tint: colors.tealTintFaint, icon: "mic-outline" },
+  [EVENT_TYPES.PERSON]: { label: "Person", color: colors.textSecondary, tint: colors.backgroundAlt, icon: "person-outline" },
+};
+
 export const MATCH_TYPES = {
   EXACT: { key: "exact", label: "Exact", color: "matchExact" },
   SEMANTIC: { key: "semantic", label: "Semantic", color: "matchSemantic" },
-  BM25: { key: "bm25", label: "Keyword", color: "matchBM25" },
+  BM25: { key: "bm25", label: "Keyword", color: "matchKeyword" },
 };
 
 // A day-grouped stream of "memory events" — this is the data the on-device
 // event segmentation + embedding pipeline would have produced.
+// mapPos is a normalized {x,y} (0-1) placement used by Echoes' Map view — an
+// abstract, non-georeferenced canvas rather than a real maps SDK dependency.
 export const memoryEvents = [
   {
     id: "ev_0142",
@@ -31,9 +47,10 @@ export const memoryEvents = [
     timestamp: "2026-06-14T11:22:00",
     confidence: 0.97,
     tags: ["password", "whiteboard", "meeting"],
-    thumbnailColor: "#3A506B",
     icon: "grid-outline",
+    mapPos: { x: 0.62, y: 0.28 },
     pinned: true,
+    hidden: false,
   },
   {
     id: "ev_0139",
@@ -45,8 +62,10 @@ export const memoryEvents = [
     timestamp: "2026-06-14T08:07:00",
     confidence: 0.91,
     tags: ["keys", "home"],
-    thumbnailColor: "#26344A",
     icon: "key-outline",
+    mapPos: { x: 0.22, y: 0.58 },
+    pinned: false,
+    hidden: false,
   },
   {
     id: "ev_0136",
@@ -59,8 +78,27 @@ export const memoryEvents = [
     timestamp: "2026-06-13T14:41:00",
     confidence: 0.95,
     tags: ["lecture", "thermodynamics", "formula"],
-    thumbnailColor: "#3A506B",
     icon: "school-outline",
+    mapPos: { x: 0.74, y: 0.62 },
+    pinned: false,
+    hidden: false,
+  },
+  {
+    id: "ev_0133",
+    type: EVENT_TYPES.AUDIO,
+    title: "Voice memo — Grocery list",
+    summary: "Quick spoken reminder to pick up milk, eggs, and detergent on the way home.",
+    transcript: "Don't forget — milk, eggs, and the blue detergent from the corner store.",
+    audioDurationSec: 14,
+    location: "Walking — Service Road",
+    source: "phone",
+    timestamp: "2026-06-12T18:44:00",
+    confidence: 0.93,
+    tags: ["reminder", "groceries"],
+    icon: "mic-outline",
+    mapPos: { x: 0.4, y: 0.42 },
+    pinned: false,
+    hidden: false,
   },
   {
     id: "ev_0131",
@@ -73,8 +111,10 @@ export const memoryEvents = [
     timestamp: "2026-06-12T17:03:00",
     confidence: 0.89,
     tags: ["receipt", "workshop"],
-    thumbnailColor: "#26344A",
     icon: "receipt-outline",
+    mapPos: { x: 0.2, y: 0.6 },
+    pinned: false,
+    hidden: false,
   },
   {
     id: "ev_0127",
@@ -86,8 +126,27 @@ export const memoryEvents = [
     timestamp: "2026-06-10T13:15:00",
     confidence: 0.84,
     tags: ["people", "career fair"],
-    thumbnailColor: "#3A506B",
     icon: "person-outline",
+    mapPos: { x: 0.78, y: 0.6 },
+    pinned: false,
+    hidden: false,
+  },
+  {
+    id: "ev_0122",
+    type: EVENT_TYPES.AUDIO,
+    title: "Voice memo — Parking spot",
+    summary: "Noted the level and section after parking at the mall.",
+    transcript: "Parked on level 2, section C, near the pillar with the fire extinguisher.",
+    audioDurationSec: 8,
+    location: "Centaurus Mall — Parking",
+    source: "phone",
+    timestamp: "2026-06-08T19:12:00",
+    confidence: 0.9,
+    tags: ["parking", "reminder"],
+    icon: "mic-outline",
+    mapPos: { x: 0.86, y: 0.34 },
+    pinned: false,
+    hidden: false,
   },
   {
     id: "ev_0119",
@@ -100,8 +159,10 @@ export const memoryEvents = [
     timestamp: "2026-06-08T19:30:00",
     confidence: 0.88,
     tags: ["shopping"],
-    thumbnailColor: "#26344A",
     icon: "shirt-outline",
+    mapPos: { x: 0.85, y: 0.32 },
+    pinned: false,
+    hidden: false,
   },
   {
     id: "ev_0104",
@@ -113,8 +174,10 @@ export const memoryEvents = [
     timestamp: "2026-06-02T10:12:00",
     confidence: 0.9,
     tags: ["workshop", "storage"],
-    thumbnailColor: "#3A506B",
     icon: "cube-outline",
+    mapPos: { x: 0.19, y: 0.62 },
+    pinned: false,
+    hidden: false,
   },
 ];
 

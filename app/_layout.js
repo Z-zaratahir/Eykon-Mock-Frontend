@@ -5,11 +5,11 @@ import { colors } from "../constants/theme";
 
 export default function RootLayout() {
   return (
-    <GestureHandlerRootView style={{ flex: 1, backgroundColor: colors.bg }}>
-      <StatusBar style="light" />
+    <GestureHandlerRootView style={{ flex: 1, backgroundColor: colors.background }}>
+      <StatusBar style="dark" />
       <Stack
         initialRouteName="onboarding"
-        screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.bg } }}
+        screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.background } }}
       >
         <Stack.Screen name="onboarding" />
         <Stack.Screen name="(tabs)" />

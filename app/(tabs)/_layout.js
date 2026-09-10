@@ -9,7 +9,6 @@ export default function TabsLayout() {
     >
       <Tabs.Screen name="index" options={{ title: "Chat" }} />
       <Tabs.Screen name="echoes" options={{ title: "Echoes" }} />
-      <Tabs.Screen name="capture" options={{ title: "Capture" }} />
       <Tabs.Screen name="glasses" options={{ title: "Glasses" }} />
       <Tabs.Screen name="profile" options={{ title: "Profile" }} />
     </Tabs>

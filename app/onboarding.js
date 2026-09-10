@@ -3,7 +3,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { router } from "expo-router";
-import { colors, radius, spacing, type } from "../constants/theme";
+import { colors, gradients, radius, spacing, type } from "../constants/theme";
 
 const { width } = Dimensions.get("window");
 
@@ -11,12 +11,12 @@ export default function Onboarding() {
   const insets = useSafeAreaInsets();
 
   return (
-    <LinearGradient colors={["#0B132B", "#131C3B", "#0B132B"]} style={{ flex: 1 }}>
+    <View style={{ flex: 1, backgroundColor: colors.background }}>
       <View style={[styles.wrap, { paddingTop: insets.top + 40, paddingBottom: insets.bottom + 24 }]}>
         <View style={styles.glowWrap}>
-          <LinearGradient colors={["rgba(255,159,28,0.35)", "rgba(255,159,28,0)"]} style={styles.glow} />
+          <LinearGradient colors={gradients.heroTeal} style={styles.glow} />
           <View style={styles.logoCircle}>
-            <Ionicons name="glasses" size={40} color={colors.accent} />
+            <Ionicons name="glasses" size={40} color={colors.teal} />
           </View>
         </View>
 
@@ -25,18 +25,18 @@ export default function Onboarding() {
 
         <View style={styles.exampleCard}>
           <View style={styles.exampleRow}>
-            <Ionicons name="create-outline" size={16} color={colors.textMuted} />
+            <Ionicons name="create-outline" size={16} color={colors.textSecondary} />
             <Text style={styles.exampleText}>Someone writes a Wi-Fi password on a whiteboard.</Text>
           </View>
           <View style={styles.exampleDivider} />
           <View style={styles.exampleRow}>
-            <Ionicons name="time-outline" size={16} color={colors.textMuted} />
+            <Ionicons name="time-outline" size={16} color={colors.textSecondary} />
             <Text style={styles.exampleText}>Three months pass. You never wrote it down.</Text>
           </View>
           <View style={styles.exampleDivider} />
           <View style={styles.exampleRow}>
-            <Ionicons name="sparkles" size={16} color={colors.accent} />
-            <Text style={[styles.exampleText, { color: colors.accent, fontWeight: "600" }]}>
+            <Ionicons name="sparkles" size={16} color={colors.teal} />
+            <Text style={[styles.exampleText, { color: colors.teal, fontWeight: "600" }]}>
               "What was that password again?" — Eykon remembers.
             </Text>
           </View>
@@ -52,17 +52,17 @@ export default function Onboarding() {
 
         <Pressable style={styles.cta} onPress={() => router.replace("/(tabs)")}>
           <Text style={styles.ctaText}>Enter Eykon</Text>
-          <Ionicons name="arrow-forward" size={18} color={colors.bg} />
+          <Ionicons name="arrow-forward" size={18} color={colors.background} />
         </Pressable>
       </View>
-    </LinearGradient>
+    </View>
   );
 }
 
 function Feature({ icon, label }) {
   return (
     <View style={styles.featureItem}>
-      <Ionicons name={icon} size={16} color={colors.accent} />
+      <Ionicons name={icon} size={16} color={colors.teal} />
       <Text style={styles.featureLabel}>{label}</Text>
     </View>
   );
@@ -76,25 +76,25 @@ const styles = StyleSheet.create({
     width: 84,
     height: 84,
     borderRadius: 42,
-    backgroundColor: colors.surface,
+    backgroundColor: colors.backgroundAlt,
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: colors.hairline,
   },
-  wordmark: { color: colors.text, fontSize: 34, fontWeight: "800", letterSpacing: 6 },
-  tagline: { color: colors.textMuted, fontSize: 14.5, marginTop: 8, marginBottom: spacing.xl, textAlign: "center" },
+  wordmark: { color: colors.textPrimary, fontSize: 34, fontWeight: "800", letterSpacing: 6 },
+  tagline: { color: colors.textSecondary, fontSize: 14.5, marginTop: 8, marginBottom: spacing.xl, textAlign: "center" },
   exampleCard: {
     width: "100%",
-    backgroundColor: colors.surface,
+    backgroundColor: colors.backgroundAlt,
     borderRadius: radius.lg,
     padding: spacing.md,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: colors.hairline,
   },
   exampleRow: { flexDirection: "row", alignItems: "flex-start", gap: 10 },
-  exampleText: { color: colors.textMuted, fontSize: 13, flex: 1, lineHeight: 18 },
-  exampleDivider: { height: 1, backgroundColor: colors.border, marginVertical: 10, marginLeft: 26 },
+  exampleText: { color: colors.textSecondary, fontSize: 13, flex: 1, lineHeight: 18 },
+  exampleDivider: { height: 1, backgroundColor: colors.hairline, marginVertical: 10, marginLeft: 26 },
   featureRow: { flexDirection: "row", gap: 10, marginBottom: spacing.lg, width: "100%" },
   featureItem: {
     flex: 1,
@@ -102,22 +102,22 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     gap: 6,
-    backgroundColor: colors.bgElevated,
+    backgroundColor: colors.backgroundAlt,
     borderRadius: radius.md,
     paddingVertical: 10,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: colors.hairline,
   },
-  featureLabel: { color: colors.textMuted, fontSize: 11, fontWeight: "600" },
+  featureLabel: { color: colors.textSecondary, fontSize: 11, fontWeight: "600" },
   cta: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
     gap: 8,
-    backgroundColor: colors.accent,
+    backgroundColor: colors.teal,
     borderRadius: radius.pill,
     paddingVertical: 16,
     width: "100%",
   },
-  ctaText: { color: colors.bg, fontWeight: "800", fontSize: 15.5 },
+  ctaText: { color: colors.background, fontWeight: "800", fontSize: 15.5 },
 });

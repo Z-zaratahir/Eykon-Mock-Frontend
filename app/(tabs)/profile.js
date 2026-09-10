@@ -14,14 +14,14 @@ export default function ProfileScreen() {
   const [multilingual, setMultilingual] = useState("English + Urdu");
 
   return (
-    <ScrollView style={{ flex: 1, backgroundColor: colors.bg }} contentContainerStyle={{ paddingBottom: 140 }}>
+    <ScrollView style={{ flex: 1, backgroundColor: colors.background }} contentContainerStyle={{ paddingBottom: 140 }}>
       <View style={{ paddingTop: insets.top + 8, paddingHorizontal: spacing.lg }}>
         <Text style={styles.eyebrow}>YOUR PROFILE</Text>
         <Text style={styles.title}>You</Text>
       </View>
 
       <View style={styles.profileCard}>
-        <LinearGradient colors={[colors.accent, colors.accentDeep]} style={styles.avatar}>
+        <LinearGradient colors={[colors.teal, colors.tealDark]} style={styles.avatar}>
           <Text style={styles.avatarInitial}>Z</Text>
         </LinearGradient>
         <View style={{ flex: 1 }}>
@@ -82,7 +82,7 @@ export default function ProfileScreen() {
             const active = multilingual === l;
             return (
               <Pressable key={l} onPress={() => setMultilingual(l)} style={[styles.langChip, active && styles.langChipActive]}>
-                <Text style={[styles.langChipText, active && { color: colors.bg }]}>{l}</Text>
+                <Text style={[styles.langChipText, active && { color: colors.background }]}>{l}</Text>
               </Pressable>
             );
           })}
@@ -107,13 +107,13 @@ function ToggleRow({ icon, title, desc, value, onChange }) {
   return (
     <View style={styles.toggleRow}>
       <View style={styles.toggleIconWrap}>
-        <Ionicons name={icon} size={17} color={colors.accent} />
+        <Ionicons name={icon} size={17} color={colors.teal} />
       </View>
       <View style={{ flex: 1 }}>
         <Text style={styles.toggleTitle}>{title}</Text>
         <Text style={styles.toggleDesc}>{desc}</Text>
       </View>
-      <Switch value={value} onValueChange={onChange} trackColor={{ false: colors.surfaceAlt, true: colors.accentDeep }} thumbColor={colors.text} />
+      <Switch value={value} onValueChange={onChange} trackColor={{ false: colors.backgroundAlt, true: colors.tealDark }} thumbColor={colors.textPrimary} />
     </View>
   );
 }
@@ -121,7 +121,7 @@ function ToggleRow({ icon, title, desc, value, onChange }) {
 function Row({ icon, label, value, last }) {
   return (
     <View style={[styles.aboutRow, !last && styles.aboutRowBorder]}>
-      <Ionicons name={icon} size={15} color={colors.textMuted} />
+      <Ionicons name={icon} size={15} color={colors.textSecondary} />
       <Text style={styles.aboutLabel}>{label}</Text>
       <Text style={styles.aboutValue}>{value}</Text>
     </View>
@@ -129,55 +129,55 @@ function Row({ icon, label, value, last }) {
 }
 
 const styles = StyleSheet.create({
-  eyebrow: { color: colors.accent, ...type.label, textTransform: "uppercase" },
-  title: { color: colors.text, ...type.display, marginTop: 4, marginBottom: spacing.md },
+  eyebrow: { color: colors.teal, ...type.label, textTransform: "uppercase" },
+  title: { color: colors.textPrimary, ...type.display, marginTop: 4, marginBottom: spacing.md },
   profileCard: {
     flexDirection: "row",
     alignItems: "center",
     gap: spacing.md,
     marginHorizontal: spacing.lg,
-    backgroundColor: colors.surface,
+    backgroundColor: colors.backgroundAlt,
     borderRadius: radius.lg,
     padding: spacing.md,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: colors.hairline,
     marginBottom: spacing.md,
   },
   avatar: { width: 52, height: 52, borderRadius: 26, alignItems: "center", justifyContent: "center" },
-  avatarInitial: { color: colors.bg, fontSize: 22, fontWeight: "800" },
-  profileName: { color: colors.text, fontSize: 17, fontWeight: "700" },
-  profileSub: { color: colors.textFaintSolid, fontSize: 12, marginTop: 2 },
-  statPill: { alignItems: "center", backgroundColor: colors.accentSoft, borderRadius: radius.md, paddingVertical: 8, paddingHorizontal: 12 },
-  statPillNumber: { color: colors.accent, fontSize: 16, fontWeight: "800" },
-  statPillLabel: { color: colors.accent, fontSize: 9.5 },
+  avatarInitial: { color: colors.background, fontSize: 22, fontWeight: "800" },
+  profileName: { color: colors.textPrimary, fontSize: 17, fontWeight: "700" },
+  profileSub: { color: colors.textFaint, fontSize: 12, marginTop: 2 },
+  statPill: { alignItems: "center", backgroundColor: colors.tealTint, borderRadius: radius.md, paddingVertical: 8, paddingHorizontal: 12 },
+  statPillNumber: { color: colors.teal, fontSize: 16, fontWeight: "800" },
+  statPillLabel: { color: colors.teal, fontSize: 9.5 },
   statsGrid: { flexDirection: "row", gap: 10, marginHorizontal: spacing.lg, marginBottom: spacing.lg },
-  statBox: { flex: 1, backgroundColor: colors.surface, borderRadius: radius.lg, paddingVertical: 14, alignItems: "center", borderWidth: 1, borderColor: colors.border },
-  statBoxNumber: { color: colors.text, fontSize: 18, fontWeight: "800" },
-  statBoxLabel: { color: colors.textFaintSolid, fontSize: 10, marginTop: 3, textAlign: "center", paddingHorizontal: 6 },
+  statBox: { flex: 1, backgroundColor: colors.backgroundAlt, borderRadius: radius.lg, paddingVertical: 14, alignItems: "center", borderWidth: 1, borderColor: colors.hairline },
+  statBoxNumber: { color: colors.textPrimary, fontSize: 18, fontWeight: "800" },
+  statBoxLabel: { color: colors.textFaint, fontSize: 10, marginTop: 3, textAlign: "center", paddingHorizontal: 6 },
   section: { paddingHorizontal: spacing.lg, marginBottom: spacing.lg },
-  sectionLabel: { color: colors.textFaintSolid, ...type.label, textTransform: "uppercase", marginBottom: spacing.sm },
+  sectionLabel: { color: colors.textFaint, ...type.label, textTransform: "uppercase", marginBottom: spacing.sm },
   toggleRow: {
     flexDirection: "row",
     alignItems: "center",
     gap: spacing.sm,
-    backgroundColor: colors.surface,
+    backgroundColor: colors.backgroundAlt,
     borderRadius: radius.lg,
     padding: spacing.md,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: colors.hairline,
     marginBottom: 8,
   },
-  toggleIconWrap: { width: 32, height: 32, borderRadius: 16, backgroundColor: colors.accentSoft, alignItems: "center", justifyContent: "center" },
-  toggleTitle: { color: colors.text, fontSize: 13.5, fontWeight: "700" },
-  toggleDesc: { color: colors.textFaintSolid, fontSize: 11, marginTop: 2, lineHeight: 15 },
+  toggleIconWrap: { width: 32, height: 32, borderRadius: 16, backgroundColor: colors.tealTint, alignItems: "center", justifyContent: "center" },
+  toggleTitle: { color: colors.textPrimary, fontSize: 13.5, fontWeight: "700" },
+  toggleDesc: { color: colors.textFaint, fontSize: 11, marginTop: 2, lineHeight: 15 },
   langRow: { flexDirection: "row", gap: 8, marginBottom: 8 },
-  langChip: { flex: 1, alignItems: "center", paddingVertical: 10, borderRadius: radius.md, backgroundColor: colors.surfaceAlt, borderWidth: 1, borderColor: colors.border },
-  langChipActive: { backgroundColor: colors.accent, borderColor: colors.accent },
-  langChipText: { color: colors.textMuted, fontSize: 12, fontWeight: "700" },
-  hintText: { color: colors.textFaintSolid, fontSize: 11.5 },
-  aboutCard: { backgroundColor: colors.surface, borderRadius: radius.lg, padding: spacing.md, borderWidth: 1, borderColor: colors.border },
+  langChip: { flex: 1, alignItems: "center", paddingVertical: 10, borderRadius: radius.md, backgroundColor: colors.backgroundAlt, borderWidth: 1, borderColor: colors.hairline },
+  langChipActive: { backgroundColor: colors.teal, borderColor: colors.teal },
+  langChipText: { color: colors.textSecondary, fontSize: 12, fontWeight: "700" },
+  hintText: { color: colors.textFaint, fontSize: 11.5 },
+  aboutCard: { backgroundColor: colors.backgroundAlt, borderRadius: radius.lg, padding: spacing.md, borderWidth: 1, borderColor: colors.hairline },
   aboutRow: { flexDirection: "row", alignItems: "center", gap: 10, paddingVertical: 10 },
-  aboutRowBorder: { borderBottomWidth: 1, borderBottomColor: colors.border },
-  aboutLabel: { color: colors.textMuted, fontSize: 12.5, flex: 1 },
-  aboutValue: { color: colors.text, fontSize: 12, fontWeight: "600" },
+  aboutRowBorder: { borderBottomWidth: 1, borderBottomColor: colors.hairline },
+  aboutLabel: { color: colors.textSecondary, fontSize: 12.5, flex: 1 },
+  aboutValue: { color: colors.textPrimary, fontSize: 12, fontWeight: "600" },
 });

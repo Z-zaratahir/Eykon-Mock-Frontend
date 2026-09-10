@@ -45,14 +45,14 @@ function EventCard({ event }) {
   return (
     <Pressable onPress={() => router.push(`/memory/${event.id}`)} style={({ pressed }) => [styles.card, pressed && { opacity: 0.85 }]}>
       <View style={[styles.thumb, { backgroundColor: event.thumbnailColor }]}>
-        <Ionicons name={event.icon} size={22} color={colors.text} />
+        <Ionicons name={event.icon} size={22} color={colors.textPrimary} />
         {event.source === "glasses" ? (
           <View style={styles.sourcePip}>
-            <Ionicons name="glasses" size={9} color={colors.bg} />
+            <Ionicons name="glasses" size={9} color={colors.background} />
           </View>
         ) : (
-          <View style={[styles.sourcePip, { backgroundColor: colors.slate }]}>
-            <Ionicons name="phone-portrait" size={9} color={colors.text} />
+          <View style={[styles.sourcePip, { backgroundColor: colors.textSecondary }]}>
+            <Ionicons name="phone-portrait" size={9} color={colors.textPrimary} />
           </View>
         )}
       </View>
@@ -68,14 +68,14 @@ function EventCard({ event }) {
         </Text>
         {event.ocrText ? (
           <View style={styles.ocrPill}>
-            <Ionicons name="scan-outline" size={11} color={colors.accent} />
+            <Ionicons name="scan-outline" size={11} color={colors.teal} />
             <Text style={styles.ocrText} numberOfLines={1}>
               {event.ocrText}
             </Text>
           </View>
         ) : null}
         <View style={styles.tagRow}>
-          <Ionicons name="location-outline" size={11} color={colors.textFaintSolid} />
+          <Ionicons name="location-outline" size={11} color={colors.textFaint} />
           <Text style={styles.locationText}>{event.location}</Text>
         </View>
       </View>
@@ -105,7 +105,7 @@ export default function EchoesScreen() {
   const sections = useMemo(() => groupByDay(filtered), [filtered]);
 
   return (
-    <View style={{ flex: 1, backgroundColor: colors.bg }}>
+    <View style={{ flex: 1, backgroundColor: colors.background }}>
       <View style={{ paddingTop: insets.top + 8, paddingHorizontal: spacing.lg }}>
         <Text style={styles.eyebrow}>YOUR MEMORY, INDEXED</Text>
         <Text style={styles.title}>Echoes</Text>
@@ -127,12 +127,12 @@ export default function EchoesScreen() {
         </View>
 
         <View style={styles.searchBar}>
-          <Ionicons name="search" size={16} color={colors.textFaintSolid} />
+          <Ionicons name="search" size={16} color={colors.textFaint} />
           <TextInput
             value={query}
             onChangeText={setQuery}
             placeholder="Search your memory…"
-            placeholderTextColor={colors.textFaintSolid}
+            placeholderTextColor={colors.textFaint}
             style={styles.searchInput}
           />
         </View>
@@ -150,8 +150,8 @@ export default function EchoesScreen() {
                     onPress={() => setFilter(f.key)}
                     style={[styles.filterChip, active && styles.filterChipActive]}
                   >
-                    <Ionicons name={f.icon} size={13} color={active ? colors.bg : colors.textMuted} />
-                    <Text style={[styles.filterChipText, active && { color: colors.bg }]}>{f.label}</Text>
+                    <Ionicons name={f.icon} size={13} color={active ? colors.background : colors.textSecondary} />
+                    <Text style={[styles.filterChipText, active && { color: colors.background }]}>{f.label}</Text>
                   </Pressable>
                 );
               })}
@@ -173,7 +173,7 @@ export default function EchoesScreen() {
         contentContainerStyle={{ paddingHorizontal: spacing.lg, paddingBottom: 140, paddingTop: spacing.sm }}
         ListEmptyComponent={
           <View style={styles.empty}>
-            <Ionicons name="moon-outline" size={28} color={colors.textFaintSolid} />
+            <Ionicons name="moon-outline" size={28} color={colors.textFaint} />
             <Text style={styles.emptyText}>Nothing matches yet. Try a different search or filter.</Text>
           </View>
         }
@@ -184,34 +184,34 @@ export default function EchoesScreen() {
 }
 
 const styles = StyleSheet.create({
-  eyebrow: { color: colors.accent, ...type.label, textTransform: "uppercase" },
-  title: { color: colors.text, ...type.display, marginTop: 4 },
-  subtitle: { color: colors.textMuted, ...type.body, marginTop: 4, marginBottom: spacing.md },
+  eyebrow: { color: colors.teal, ...type.label, textTransform: "uppercase" },
+  title: { color: colors.textPrimary, ...type.display, marginTop: 4 },
+  subtitle: { color: colors.textSecondary, ...type.body, marginTop: 4, marginBottom: spacing.md },
   statsRow: { flexDirection: "row", gap: 10, marginBottom: spacing.md },
   statChip: {
     flex: 1,
-    backgroundColor: colors.surface,
+    backgroundColor: colors.backgroundAlt,
     borderRadius: radius.md,
     paddingVertical: 10,
     alignItems: "center",
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: colors.hairline,
   },
-  statNumber: { color: colors.accent, fontSize: 17, fontWeight: "700" },
-  statLabel: { color: colors.textFaintSolid, fontSize: 10.5, marginTop: 2 },
+  statNumber: { color: colors.teal, fontSize: 17, fontWeight: "700" },
+  statLabel: { color: colors.textFaint, fontSize: 10.5, marginTop: 2 },
   searchBar: {
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
-    backgroundColor: colors.surface,
+    backgroundColor: colors.backgroundAlt,
     borderRadius: radius.pill,
     paddingHorizontal: 14,
     height: 42,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: colors.hairline,
     marginBottom: spacing.sm,
   },
-  searchInput: { flex: 1, color: colors.text, fontSize: 14 },
+  searchInput: { flex: 1, color: colors.textPrimary, fontSize: 14 },
   filterRow: { flexDirection: "row", flexWrap: "wrap", gap: 8, marginBottom: spacing.sm },
   filterChip: {
     flexDirection: "row",
@@ -220,24 +220,24 @@ const styles = StyleSheet.create({
     paddingVertical: 7,
     paddingHorizontal: 12,
     borderRadius: radius.pill,
-    backgroundColor: colors.surfaceAlt,
+    backgroundColor: colors.backgroundAlt,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: colors.hairline,
   },
-  filterChipActive: { backgroundColor: colors.accent, borderColor: colors.accent },
-  filterChipText: { color: colors.textMuted, fontSize: 12.5, fontWeight: "600" },
+  filterChipActive: { backgroundColor: colors.teal, borderColor: colors.teal },
+  filterChipText: { color: colors.textSecondary, fontSize: 12.5, fontWeight: "600" },
   sectionHeaderWrap: { flexDirection: "row", alignItems: "center", gap: 10, marginBottom: 10, marginTop: 6 },
-  sectionHeader: { color: colors.textMuted, fontSize: 13, fontWeight: "700" },
-  sectionLine: { flex: 1, height: 1, backgroundColor: colors.border },
+  sectionHeader: { color: colors.textSecondary, fontSize: 13, fontWeight: "700" },
+  sectionLine: { flex: 1, height: 1, backgroundColor: colors.hairline },
   card: {
     flexDirection: "row",
     gap: 12,
-    backgroundColor: colors.surface,
+    backgroundColor: colors.backgroundAlt,
     borderRadius: radius.lg,
     padding: 12,
     marginBottom: 10,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: colors.hairline,
   },
   thumb: {
     width: 52,
@@ -253,30 +253,30 @@ const styles = StyleSheet.create({
     width: 18,
     height: 18,
     borderRadius: 9,
-    backgroundColor: colors.accent,
+    backgroundColor: colors.teal,
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 2,
-    borderColor: colors.surface,
+    borderColor: colors.backgroundAlt,
   },
   cardTopRow: { flexDirection: "row", justifyContent: "space-between", gap: 8 },
-  cardTitle: { color: colors.text, fontSize: 14.5, fontWeight: "700", flexShrink: 1 },
-  cardTime: { color: colors.textFaintSolid, fontSize: 11 },
-  cardSummary: { color: colors.textMuted, fontSize: 12.5, marginTop: 3, lineHeight: 17 },
+  cardTitle: { color: colors.textPrimary, fontSize: 14.5, fontWeight: "700", flexShrink: 1 },
+  cardTime: { color: colors.textFaint, fontSize: 11 },
+  cardSummary: { color: colors.textSecondary, fontSize: 12.5, marginTop: 3, lineHeight: 17 },
   ocrPill: {
     flexDirection: "row",
     alignItems: "center",
     gap: 5,
-    backgroundColor: colors.accentSoft,
+    backgroundColor: colors.tealTint,
     alignSelf: "flex-start",
     borderRadius: 8,
     paddingVertical: 3,
     paddingHorizontal: 8,
     marginTop: 6,
   },
-  ocrText: { color: colors.accent, fontSize: 11.5, fontFamily: "monospace" },
+  ocrText: { color: colors.teal, fontSize: 11.5, fontFamily: "monospace" },
   tagRow: { flexDirection: "row", alignItems: "center", gap: 4, marginTop: 6 },
-  locationText: { color: colors.textFaintSolid, fontSize: 11 },
+  locationText: { color: colors.textFaint, fontSize: 11 },
   empty: { alignItems: "center", paddingTop: 60, gap: 10 },
-  emptyText: { color: colors.textFaintSolid, fontSize: 13, textAlign: "center", paddingHorizontal: 40 },
+  emptyText: { color: colors.textFaint, fontSize: 13, textAlign: "center", paddingHorizontal: 40 },
 });

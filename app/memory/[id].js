@@ -14,13 +14,13 @@ export default function MemoryDetail() {
   const date = new Date(event.timestamp);
 
   return (
-    <View style={{ flex: 1, backgroundColor: colors.bg }}>
-      <LinearGradient colors={[event.thumbnailColor, colors.bg]} style={[styles.hero, { paddingTop: insets.top + 10 }]}>
+    <View style={{ flex: 1, backgroundColor: colors.background }}>
+      <LinearGradient colors={[event.thumbnailColor, colors.background]} style={[styles.hero, { paddingTop: insets.top + 10 }]}>
         <Pressable onPress={() => router.back()} style={styles.backButton}>
-          <Ionicons name="chevron-back" size={22} color={colors.text} />
+          <Ionicons name="chevron-back" size={22} color={colors.textPrimary} />
         </Pressable>
         <View style={styles.heroIconWrap}>
-          <Ionicons name={event.icon} size={40} color={colors.text} />
+          <Ionicons name={event.icon} size={40} color={colors.textPrimary} />
         </View>
       </LinearGradient>
 
@@ -36,7 +36,7 @@ export default function MemoryDetail() {
         </Text>
 
         <View style={styles.metaRow}>
-          <Ionicons name="location-outline" size={14} color={colors.textMuted} />
+          <Ionicons name="location-outline" size={14} color={colors.textSecondary} />
           <Text style={styles.metaText}>{event.location}</Text>
         </View>
 
@@ -49,7 +49,7 @@ export default function MemoryDetail() {
           <>
             <Text style={styles.sectionLabel}>Extracted text (OCR)</Text>
             <View style={[styles.card, styles.ocrCard]}>
-              <Ionicons name="scan-outline" size={16} color={colors.accent} />
+              <Ionicons name="scan-outline" size={16} color={colors.teal} />
               <Text style={styles.ocrText}>{event.ocrText}</Text>
             </View>
           </>
@@ -72,7 +72,7 @@ export default function MemoryDetail() {
         </View>
 
         <Pressable style={styles.askButton} onPress={() => router.push("/(tabs)")}>
-          <Ionicons name="chatbubble-ellipses-outline" size={16} color={colors.bg} />
+          <Ionicons name="chatbubble-ellipses-outline" size={16} color={colors.background} />
           <Text style={styles.askButtonText}>Ask a follow-up about this</Text>
         </Pressable>
       </ScrollView>
@@ -112,35 +112,35 @@ const styles = StyleSheet.create({
     marginBottom: -10,
   },
   badgeRow: { flexDirection: "row", gap: 8, marginBottom: spacing.md },
-  title: { color: colors.text, ...type.title, marginBottom: 4 },
-  timestamp: { color: colors.textMuted, fontSize: 13, marginBottom: 10 },
+  title: { color: colors.textPrimary, ...type.title, marginBottom: 4 },
+  timestamp: { color: colors.textSecondary, fontSize: 13, marginBottom: 10 },
   metaRow: { flexDirection: "row", alignItems: "center", gap: 6, marginBottom: spacing.lg },
-  metaText: { color: colors.textMuted, fontSize: 13.5 },
-  sectionLabel: { color: colors.textFaintSolid, ...type.label, textTransform: "uppercase", marginBottom: 8, marginTop: spacing.md },
+  metaText: { color: colors.textSecondary, fontSize: 13.5 },
+  sectionLabel: { color: colors.textFaint, ...type.label, textTransform: "uppercase", marginBottom: 8, marginTop: spacing.md },
   card: {
-    backgroundColor: colors.surface,
+    backgroundColor: colors.backgroundAlt,
     borderRadius: radius.lg,
     padding: spacing.md,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: colors.hairline,
   },
-  summaryText: { color: colors.text, ...type.body },
-  ocrCard: { flexDirection: "row", alignItems: "center", gap: 10, backgroundColor: colors.accentSoft, borderColor: "transparent" },
-  ocrText: { color: colors.accent, fontFamily: "monospace", fontSize: 15, fontWeight: "600" },
+  summaryText: { color: colors.textPrimary, ...type.body },
+  ocrCard: { flexDirection: "row", alignItems: "center", gap: 10, backgroundColor: colors.tealTint, borderColor: "transparent" },
+  ocrText: { color: colors.teal, fontFamily: "monospace", fontSize: 15, fontWeight: "600" },
   tagWrap: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
   row: { flexDirection: "row", justifyContent: "space-between", paddingVertical: 10, gap: 12 },
-  rowBorder: { borderBottomWidth: 1, borderBottomColor: colors.border },
-  rowLabel: { color: colors.textMuted, fontSize: 12.5 },
-  rowValue: { color: colors.text, fontSize: 12.5, flexShrink: 1, textAlign: "right" },
+  rowBorder: { borderBottomWidth: 1, borderBottomColor: colors.hairline },
+  rowLabel: { color: colors.textSecondary, fontSize: 12.5 },
+  rowValue: { color: colors.textPrimary, fontSize: 12.5, flexShrink: 1, textAlign: "right" },
   askButton: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
     gap: 8,
-    backgroundColor: colors.accent,
+    backgroundColor: colors.teal,
     borderRadius: radius.pill,
     paddingVertical: 14,
     marginTop: spacing.xl,
   },
-  askButtonText: { color: colors.bg, fontWeight: "700", fontSize: 14.5 },
+  askButtonText: { color: colors.background, fontWeight: "700", fontSize: 14.5 },
 });

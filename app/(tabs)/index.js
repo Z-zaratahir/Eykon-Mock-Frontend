@@ -33,7 +33,7 @@ function RetrievalTrace({ retrieval }) {
   return (
     <View style={styles.trace}>
       <View style={styles.traceRow}>
-        <Ionicons name="flash-outline" size={12} color={colors.textFaintSolid} />
+        <Ionicons name="flash-outline" size={12} color={colors.textFaint} />
         <Text style={styles.traceText}>{retrieval.latencyMs}ms retrieval</Text>
         {retrieval.hitAt1 ? <Badge label="Hit@1" tone="exact" small /> : null}
       </View>
@@ -43,7 +43,7 @@ function RetrievalTrace({ retrieval }) {
           onPress={() => router.push(`/memory/${s.eventId}`)}
           style={styles.sourceChip}
         >
-          <Ionicons name="albums-outline" size={13} color={colors.accent} />
+          <Ionicons name="albums-outline" size={13} color={colors.teal} />
           <Text style={styles.sourceChipText} numberOfLines={1}>
             {s.title}
           </Text>
@@ -59,13 +59,13 @@ function Bubble({ item }) {
   return (
     <View style={[styles.bubbleRow, isUser && styles.bubbleRowUser]}>
       {!isUser && (
-        <LinearGradient colors={[colors.accent, colors.accentDeep]} style={styles.avatar}>
-          <Ionicons name="sparkles" size={14} color={colors.bg} />
+        <LinearGradient colors={[colors.teal, colors.tealDark]} style={styles.avatar}>
+          <Ionicons name="sparkles" size={14} color={colors.background} />
         </LinearGradient>
       )}
       <View style={{ maxWidth: "80%" }}>
         <View style={[styles.bubble, isUser ? styles.bubbleUser : styles.bubbleAssistant]}>
-          <Text style={[styles.bubbleText, isUser && { color: colors.bg }]}>{item.text}</Text>
+          <Text style={[styles.bubbleText, isUser && { color: colors.background }]}>{item.text}</Text>
         </View>
         {!isUser && <RetrievalTrace retrieval={item.retrieval} />}
         <Text style={[styles.timeText, isUser && { textAlign: "right" }]}>{formatTime(item.timestamp)}</Text>
@@ -122,7 +122,7 @@ export default function ChatScreen() {
 
   return (
     <KeyboardAvoidingView
-      style={{ flex: 1, backgroundColor: colors.bg }}
+      style={{ flex: 1, backgroundColor: colors.background }}
       behavior={Platform.OS === "ios" ? "padding" : undefined}
       keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 0}
     >
@@ -135,7 +135,7 @@ export default function ChatScreen() {
           </View>
         </View>
         <Pressable style={styles.iconButton} onPress={() => router.push("/(tabs)/glasses")}>
-          <Ionicons name="glasses-outline" size={20} color={colors.text} />
+          <Ionicons name="glasses-outline" size={20} color={colors.textPrimary} />
         </Pressable>
       </View>
 
@@ -149,8 +149,8 @@ export default function ChatScreen() {
         ListFooterComponent={
           thinking ? (
             <View style={styles.bubbleRow}>
-              <LinearGradient colors={[colors.accent, colors.accentDeep]} style={styles.avatar}>
-                <Ionicons name="sparkles" size={14} color={colors.bg} />
+              <LinearGradient colors={[colors.teal, colors.tealDark]} style={styles.avatar}>
+                <Ionicons name="sparkles" size={14} color={colors.background} />
               </LinearGradient>
               <View style={[styles.bubble, styles.bubbleAssistant, styles.thinkingBubble]}>
                 <ThinkingDots />
@@ -178,14 +178,14 @@ export default function ChatScreen() {
             value={input}
             onChangeText={setInput}
             placeholder="Ask about anything you've seen…"
-            placeholderTextColor={colors.textFaintSolid}
+            placeholderTextColor={colors.textFaint}
             style={styles.textInput}
             onSubmitEditing={() => send()}
             returnKeyType="send"
           />
           {input.length > 0 && (
             <Pressable onPress={() => send()} style={styles.sendButton}>
-              <Ionicons name="arrow-up" size={18} color={colors.bg} />
+              <Ionicons name="arrow-up" size={18} color={colors.background} />
             </Pressable>
           )}
         </View>
@@ -194,10 +194,10 @@ export default function ChatScreen() {
             <Animated.View
               style={[
                 styles.micButton,
-                listening && { backgroundColor: colors.danger, transform: [{ scale: pulse }] },
+                listening && { backgroundColor: colors.live, transform: [{ scale: pulse }] },
               ]}
             >
-              <Ionicons name={listening ? "mic" : "mic-outline"} size={20} color={listening ? colors.white : colors.bg} />
+              <Ionicons name={listening ? "mic" : "mic-outline"} size={20} color={listening ? colors.white : colors.background} />
             </Animated.View>
           </Pressable>
         )}
@@ -222,7 +222,7 @@ function ThinkingDots() {
   return (
     <View style={{ flexDirection: "row", gap: 5 }}>
       {dots.map((d, i) => (
-        <Animated.View key={i} style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: colors.accent, opacity: d }} />
+        <Animated.View key={i} style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: colors.teal, opacity: d }} />
       ))}
     </View>
   );
@@ -264,64 +264,64 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
     paddingBottom: spacing.sm,
   },
-  topEyebrow: { color: colors.accent, ...type.label, letterSpacing: 2 },
+  topEyebrow: { color: colors.teal, ...type.label, letterSpacing: 2 },
   statusRow: { flexDirection: "row", alignItems: "center", gap: 6, marginTop: 4 },
   liveDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: colors.success },
-  statusText: { color: colors.textMuted, fontSize: 12.5 },
+  statusText: { color: colors.textSecondary, fontSize: 12.5 },
   iconButton: {
     width: 38,
     height: 38,
     borderRadius: 19,
-    backgroundColor: colors.surface,
+    backgroundColor: colors.backgroundAlt,
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: colors.hairline,
   },
   bubbleRow: { flexDirection: "row", marginBottom: spacing.md, gap: 8, alignItems: "flex-end" },
   bubbleRowUser: { flexDirection: "row-reverse" },
   avatar: { width: 26, height: 26, borderRadius: 13, alignItems: "center", justifyContent: "center" },
   bubble: { borderRadius: radius.lg, paddingVertical: 10, paddingHorizontal: 14 },
   bubbleAssistant: {
-    backgroundColor: colors.surface,
+    backgroundColor: colors.backgroundAlt,
     borderBottomLeftRadius: 6,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: colors.hairline,
   },
   bubbleUser: {
-    backgroundColor: colors.accent,
+    backgroundColor: colors.teal,
     borderBottomRightRadius: 6,
   },
-  bubbleText: { color: colors.text, ...type.body },
+  bubbleText: { color: colors.textPrimary, ...type.body },
   thinkingBubble: { paddingVertical: 14 },
-  timeText: { color: colors.textFaintSolid, fontSize: 10.5, marginTop: 4, marginLeft: 4 },
+  timeText: { color: colors.textFaint, fontSize: 10.5, marginTop: 4, marginLeft: 4 },
   trace: { marginTop: 6, gap: 6 },
   traceRow: { flexDirection: "row", alignItems: "center", gap: 6 },
-  traceText: { color: colors.textFaintSolid, fontSize: 11 },
+  traceText: { color: colors.textFaint, fontSize: 11 },
   sourceChip: {
     flexDirection: "row",
     alignItems: "center",
     gap: 6,
-    backgroundColor: colors.bgElevated,
+    backgroundColor: colors.backgroundAlt,
     borderRadius: radius.md,
     paddingVertical: 6,
     paddingHorizontal: 10,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: colors.hairline,
     alignSelf: "flex-start",
     maxWidth: 260,
   },
-  sourceChipText: { color: colors.textMuted, fontSize: 12, flexShrink: 1 },
+  sourceChipText: { color: colors.textSecondary, fontSize: 12, flexShrink: 1 },
   promptRow: { flexDirection: "row", flexWrap: "wrap", gap: 8, paddingHorizontal: spacing.lg, paddingBottom: spacing.sm },
   promptChip: {
-    backgroundColor: colors.surfaceAlt,
+    backgroundColor: colors.backgroundAlt,
     borderRadius: radius.pill,
     paddingVertical: 8,
     paddingHorizontal: 14,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: colors.hairline,
   },
-  promptChipText: { color: colors.textMuted, fontSize: 12.5 },
+  promptChipText: { color: colors.textSecondary, fontSize: 12.5 },
   inputBar: {
     flexDirection: "row",
     alignItems: "center",
@@ -333,20 +333,20 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: colors.surface,
+    backgroundColor: colors.backgroundAlt,
     borderRadius: radius.pill,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: colors.hairline,
     paddingLeft: 16,
     paddingRight: 6,
     height: 48,
   },
-  textInput: { flex: 1, color: colors.text, fontSize: 15 },
+  textInput: { flex: 1, color: colors.textPrimary, fontSize: 15 },
   sendButton: {
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: colors.accent,
+    backgroundColor: colors.teal,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -355,7 +355,7 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: colors.accent,
+    backgroundColor: colors.teal,
     alignItems: "center",
     justifyContent: "center",
   },
