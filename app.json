@@ -1,0 +1,56 @@
+{
+  "expo": {
+    "name": "Eykon",
+    "slug": "eykon",
+    "scheme": "eykon",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "backgroundColor": "#0B132B",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.eykon.app",
+      "infoPlist": {
+        "NSCameraUsageDescription": "Eykon uses your camera to capture moments when you're not wearing your glasses.",
+        "NSMicrophoneUsageDescription": "Eykon listens for your voice questions and captures audio memories.",
+        "NSPhotoLibraryUsageDescription": "Eykon can save captured moments to your photo library."
+      }
+    },
+    "android": {
+      "package": "com.eykon.app",
+      "adaptiveIcon": {
+        "backgroundColor": "#0B132B",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "permissions": ["CAMERA", "RECORD_AUDIO"]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-font",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Eykon uses your camera to capture moments when you're not wearing your glasses.",
+          "microphonePermission": "Eykon listens for your voice questions and captures audio memories.",
+          "recordAudioAndroid": true
+        }
+      ],
+      [
+        "expo-av",
+        {
+          "microphonePermission": "Eykon listens for your voice questions and captures audio memories."
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}
