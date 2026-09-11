@@ -284,7 +284,7 @@ export default function EchoesScreen() {
           stickySectionHeadersEnabled={false}
         />
       ) : (
-        <View style={{ flex: 1, paddingHorizontal: spacing.lg, paddingTop: spacing.sm }}>
+        <View style={{ flex: 1, paddingHorizontal: spacing.lg, paddingTop: spacing.sm, paddingBottom: 140 }}>
           <MemoryMap events={filtered} />
         </View>
       )}

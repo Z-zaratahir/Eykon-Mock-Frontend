@@ -7,6 +7,7 @@ import {
   Pressable,
   TextInput,
   KeyboardAvoidingView,
+  Keyboard,
   Platform,
   Animated,
   AccessibilityInfo,
@@ -17,6 +18,7 @@ import * as Haptics from "expo-haptics";
 import { router, useLocalSearchParams } from "expo-router";
 import { colors, radius, spacing, type } from "../../constants/theme";
 import { Badge } from "../../components/ui";
+import { TAB_BAR_CLEARANCE } from "../../components/TabBar";
 import { chatMessages as initialMessages, suggestedPrompts, memoryEvents, glassesDevice } from "../../data/mockData";
 
 function formatTime(iso) {
@@ -35,31 +37,40 @@ function matchTone(key) {
 }
 
 // Kept and extended, not removed (see build brief — this is a defensible,
-// demoable feature). UX plan asks for it "visually quieter" by default: a
-// collapsed summary row that expands into the full source trace on demand,
-// instead of always-open technical detail.
+// demoable feature for the defense). But the UX plan is explicit that terms
+// like "Hit@1"/raw latency are "great for defense slides, wrong for the
+// actual UI" and belong behind an expandable detail, not the default text —
+// the collapsed row now reads in plain language; the jargon only shows up
+// once someone deliberately taps "Details".
 function RetrievalTrace({ retrieval }) {
   const [open, setOpen] = useState(false);
   if (!retrieval) return null;
   return (
     <View style={styles.trace}>
       <Pressable onPress={() => setOpen((o) => !o)} style={styles.traceRow} hitSlop={6}>
-        <Ionicons name="flash-outline" size={12} color={colors.textFaint} />
-        <Text style={styles.traceText}>{retrieval.latencyMs}ms</Text>
-        {retrieval.hitAt1 ? <Badge label="Hit@1" tone="exact" small /> : null}
-        <Text style={styles.traceLink}>{open ? "Hide sources" : `${retrieval.sources.length} source${retrieval.sources.length === 1 ? "" : "s"}`}</Text>
+        <Ionicons name={retrieval.hitAt1 ? "checkmark-circle" : "search-outline"} size={13} color={colors.success} />
+        <Text style={styles.traceText}>{retrieval.hitAt1 ? "Found it" : "Possible match"}</Text>
+        <Text style={styles.traceLink}>{open ? "Hide details" : "Details"}</Text>
         <Ionicons name={open ? "chevron-up" : "chevron-down"} size={12} color={colors.tealDark} />
       </Pressable>
-      {open &&
-        retrieval.sources.map((s) => (
-          <Pressable key={s.eventId} onPress={() => router.push(`/memory/${s.eventId}`)} style={styles.sourceChip}>
-            <Ionicons name="albums-outline" size={13} color={colors.teal} />
-            <Text style={styles.sourceChipText} numberOfLines={1}>
-              {s.title}
-            </Text>
-            <Badge label={s.match.label} tone={matchTone(s.match.key)} small />
-          </Pressable>
-        ))}
+      {open && (
+        <View style={styles.traceDetail}>
+          <View style={styles.traceDetailRow}>
+            <Ionicons name="flash-outline" size={12} color={colors.textFaint} />
+            <Text style={styles.traceDetailText}>{retrieval.latencyMs}ms retrieval</Text>
+            {retrieval.hitAt1 ? <Badge label="Hit@1" tone="exact" small /> : null}
+          </View>
+          {retrieval.sources.map((s) => (
+            <Pressable key={s.eventId} onPress={() => router.push(`/memory/${s.eventId}`)} style={styles.sourceChip}>
+              <Ionicons name="albums-outline" size={13} color={colors.teal} />
+              <Text style={styles.sourceChipText} numberOfLines={1}>
+                {s.title}
+              </Text>
+              <Badge label={s.match.label} tone={matchTone(s.match.key)} small />
+            </Pressable>
+          ))}
+        </View>
+      )}
     </View>
   );
 }
@@ -129,6 +140,22 @@ export default function ChatScreen() {
     AccessibilityInfo.isReduceMotionEnabled().then(setReduceMotion);
     const sub = AccessibilityInfo.addEventListener("reduceMotionChanged", setReduceMotion);
     return () => sub.remove();
+  }, []);
+
+  // The floating tab bar (components/TabBar.js) only needs clearance while
+  // it's actually visible — once the keyboard is up it covers that screen
+  // region anyway, so padding for it here would just leave a dead gap above
+  // the keyboard.
+  const [keyboardVisible, setKeyboardVisible] = useState(false);
+  useEffect(() => {
+    const showEvt = Platform.OS === "ios" ? "keyboardWillShow" : "keyboardDidShow";
+    const hideEvt = Platform.OS === "ios" ? "keyboardWillHide" : "keyboardDidHide";
+    const showSub = Keyboard.addListener(showEvt, () => setKeyboardVisible(true));
+    const hideSub = Keyboard.addListener(hideEvt, () => setKeyboardVisible(false));
+    return () => {
+      showSub.remove();
+      hideSub.remove();
+    };
   }, []);
 
   const scrollToEnd = () => setTimeout(() => listRef.current?.scrollToEnd({ animated: true }), 80);
@@ -262,7 +289,7 @@ export default function ChatScreen() {
         </View>
       )}
 
-      <View style={[styles.inputBar, { paddingBottom: Math.max(insets.bottom, 14) }]}>
+      <View style={[styles.inputBar, { paddingBottom: keyboardVisible ? Math.max(insets.bottom, 14) : insets.bottom + TAB_BAR_CLEARANCE }]}>
         <Pressable
           onPress={() => router.push({ pathname: "/capture", params: { mode: "photo" } })}
           style={styles.cameraButton}
@@ -401,8 +428,11 @@ const styles = StyleSheet.create({
   timeText: { color: colors.textFaint, fontSize: 13, marginTop: 4, marginLeft: 4 },
   trace: { marginTop: 6, gap: 6 },
   traceRow: { flexDirection: "row", alignItems: "center", gap: 6, paddingVertical: 2 },
-  traceText: { color: colors.textFaint, fontSize: 13 },
+  traceText: { color: colors.textSecondary, fontSize: 13, fontWeight: "600" },
   traceLink: { color: colors.tealDark, fontSize: 13, fontWeight: "700" },
+  traceDetail: { gap: 6, marginTop: 2 },
+  traceDetailRow: { flexDirection: "row", alignItems: "center", gap: 6 },
+  traceDetailText: { color: colors.textFaint, fontSize: 13 },
   sourceChip: {
     flexDirection: "row",
     alignItems: "center",

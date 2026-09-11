@@ -13,6 +13,15 @@ const ICONS = {
   profile: { active: "person-circle", inactive: "person-circle-outline" },
 };
 
+// This TabBar floats via position:absolute (see styles.wrap below) so it
+// overlays screen content instead of pushing it up — React Navigation gives
+// a fully-custom tabBar zero automatic layout reservation. Any fixed
+// (non-scrolling) element pinned to a tab screen's bottom edge — like Chat's
+// input bar — MUST add this much clearance on top of the safe-area inset, or
+// it renders directly behind the floating bar. Scrollable screens (Echoes,
+// Glasses, Profile) already clear it with generous contentContainer padding.
+export const TAB_BAR_CLEARANCE = 100;
+
 // Only 4 real tab routes are registered (see app/(tabs)/_layout.js) — Capture
 // is not a tab screen at all anymore. The center button below is the single,
 // unified entry point into the real camera at app/capture.js: one capture
