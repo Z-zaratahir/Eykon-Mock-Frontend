@@ -19,16 +19,36 @@ const SAMPLE_ANSWERS = [
   { q: "What does this say?", a: "It's a warning label: \"Caution — hot surface. Do not touch.\"" },
 ];
 
+// Continuous, hands-free narration of the scene — no tapping required. Cycles
+// on a timer while liveMode is on, standing in for a live object/environment
+// detector running frame-by-frame.
+const LIVE_DETECTIONS = [
+  "A ceramic mug and an open notebook on the desk.",
+  "Soft indoor lighting — looks like early evening.",
+  "A laptop, a phone, and some loose papers nearby.",
+  "A window with light curtains just to the left.",
+  "A bookshelf — a mix of paperbacks and folders.",
+  "A hand resting near the keyboard, mostly still.",
+  "A chair pushed back slightly, room feels quiet.",
+  "A plant on the windowsill catching the light.",
+];
+const LIVE_UPDATE_MS = 3500;
+
 export default function LiveLens() {
   const insets = useSafeAreaInsets();
   const [permission, requestPermission] = useCameraPermissions();
   const [state, setState] = useState("idle"); // idle | listening | thinking | answered
   const [answerIndex, setAnswerIndex] = useState(0);
+  const [liveMode, setLiveMode] = useState(false);
+  const [liveIndex, setLiveIndex] = useState(0);
   const [keepAnswer, setKeepAnswer] = useState(false);
   const [saved, setSaved] = useState(false);
   const [reduceMotion, setReduceMotion] = useState(false);
   const pulse = useRef(new Animated.Value(1)).current;
   const sheetY = useRef(new Animated.Value(220)).current;
+  const livePulse = useRef(new Animated.Value(1)).current;
+  const liveTextOpacity = useRef(new Animated.Value(1)).current;
+  const liveTimerRef = useRef(null);
 
   useEffect(() => {
     AccessibilityInfo.isReduceMotionEnabled().then(setReduceMotion);
@@ -50,13 +70,65 @@ export default function LiveLens() {
 
   useEffect(() => {
     Animated.timing(sheetY, {
-      toValue: state === "answered" ? 0 : 220,
+      toValue: state === "answered" || liveMode ? 0 : 220,
       duration: reduceMotion ? 0 : 260,
       useNativeDriver: true,
     }).start();
-  }, [state, reduceMotion]);
+  }, [state, liveMode, reduceMotion]);
+
+  // The "LIVE" indicator dot — pulses to read as actively running, not a
+  // static label. Falls back to solid (no motion) under Reduce Motion.
+  useEffect(() => {
+    if (liveMode && !reduceMotion) {
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(livePulse, { toValue: 0.35, duration: 550, useNativeDriver: true }),
+          Animated.timing(livePulse, { toValue: 1, duration: 550, useNativeDriver: true }),
+        ])
+      ).start();
+    } else {
+      livePulse.stopAnimation();
+      livePulse.setValue(1);
+    }
+  }, [liveMode, reduceMotion]);
+
+  // Cross-fade each new detection line in rather than popping — a small
+  // amount of visible motion is what sells "this is live," not static text.
+  useEffect(() => {
+    if (!liveMode) return;
+    if (reduceMotion) {
+      liveTextOpacity.setValue(1);
+      return;
+    }
+    liveTextOpacity.setValue(0);
+    Animated.timing(liveTextOpacity, { toValue: 1, duration: 220, useNativeDriver: true }).start();
+  }, [liveIndex, liveMode, reduceMotion]);
+
+  useEffect(() => {
+    if (liveMode) {
+      liveTimerRef.current = setInterval(() => {
+        setLiveIndex((i) => (i + 1) % LIVE_DETECTIONS.length);
+      }, LIVE_UPDATE_MS);
+    } else {
+      clearInterval(liveTimerRef.current);
+    }
+    return () => clearInterval(liveTimerRef.current);
+  }, [liveMode]);
+
+  const toggleLive = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    setState("idle");
+    setSaved(false);
+    if (liveMode) {
+      setLiveMode(false);
+    } else {
+      setLiveIndex(0);
+      setLiveMode(true);
+    }
+  };
 
   const ask = () => {
+    if (liveMode) return;
     if (state !== "idle" && state !== "answered") return;
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     setSaved(false);
@@ -120,52 +192,90 @@ export default function LiveLens() {
         </View>
       </LinearGradient>
 
-      {state === "idle" && (
+      {state === "idle" && !liveMode && (
         <View style={styles.hintWrap} pointerEvents="none">
-          <Text style={styles.hintText}>Point at something, then tap to ask</Text>
+          <Text style={styles.hintText}>Point at something, then tap to ask — or go Live to narrate hands-free</Text>
         </View>
       )}
 
       <View style={[styles.askRow, { paddingBottom: insets.bottom + 28 }]}>
-        <Pressable onPress={ask} style={styles.askButtonWrap} accessibilityLabel="Ask about what you see">
-          <Animated.View style={[styles.askButton, state === "listening" && { backgroundColor: colors.live, transform: [{ scale: pulse }] }]}>
-            {state === "thinking" ? (
-              <Ionicons name="ellipsis-horizontal" size={22} color={colors.white} />
-            ) : (
-              <Ionicons name={state === "listening" ? "mic" : "mic-outline"} size={24} color={colors.white} />
-            )}
-          </Animated.View>
-        </Pressable>
+        <View style={styles.actionCluster}>
+          <Pressable
+            onPress={toggleLive}
+            style={[styles.liveToggleButton, liveMode && styles.liveToggleButtonActive]}
+            accessibilityLabel={liveMode ? "Stop live detection" : "Start live detection"}
+          >
+            <Ionicons name={liveMode ? "radio" : "radio-outline"} size={20} color={liveMode ? colors.white : colors.white} />
+          </Pressable>
+
+          <Pressable onPress={ask} disabled={liveMode} style={styles.askButtonWrap} accessibilityLabel="Ask about what you see">
+            <Animated.View
+              style={[
+                styles.askButton,
+                liveMode && styles.askButtonDisabled,
+                state === "listening" && { backgroundColor: colors.live, transform: [{ scale: pulse }] },
+              ]}
+            >
+              {state === "thinking" ? (
+                <Ionicons name="ellipsis-horizontal" size={22} color={colors.white} />
+              ) : (
+                <Ionicons name={state === "listening" ? "mic" : "mic-outline"} size={24} color={colors.white} />
+              )}
+            </Animated.View>
+          </Pressable>
+
+          <View style={styles.liveToggleButton_spacer} />
+        </View>
         <Text style={styles.askCaption}>
-          {state === "listening" && "Listening…"}
-          {state === "thinking" && "Looking…"}
-          {(state === "idle" || state === "answered") && "Tap to ask"}
+          {liveMode && "Live — narrating what it sees"}
+          {!liveMode && state === "listening" && "Listening…"}
+          {!liveMode && state === "thinking" && "Looking…"}
+          {!liveMode && (state === "idle" || state === "answered") && "Tap to ask"}
         </Text>
       </View>
 
       <Animated.View style={[styles.sheet, { paddingBottom: insets.bottom + 20, transform: [{ translateY: sheetY }] }]}>
         <View style={styles.sheetHandle} />
-        <View style={styles.sheetQRow}>
-          <Ionicons name="help-circle-outline" size={14} color={colors.textFaint} />
-          <Text style={styles.sheetQ}>{answer.q}</Text>
-        </View>
-        <Text style={styles.sheetAnswer}>{answer.a}</Text>
-        <View style={styles.sheetActions}>
-          <Pressable onPress={dismiss} style={styles.sheetActionGhost}>
-            <Text style={styles.sheetActionGhostText}>Dismiss</Text>
-          </Pressable>
-          <Pressable onPress={ask} style={styles.sheetActionPrimary}>
-            <Ionicons name="mic-outline" size={15} color={colors.white} />
-            <Text style={styles.sheetActionPrimaryText}>Ask again</Text>
-          </Pressable>
-        </View>
-        {saved ? (
-          <View style={styles.savedRow}>
-            <Ionicons name="checkmark-circle" size={14} color={colors.success} />
-            <Text style={styles.savedText}>Saved as a memory</Text>
-          </View>
+        {liveMode ? (
+          <>
+            <View style={styles.liveBadgeRow}>
+              <Animated.View style={[styles.liveDot, { opacity: livePulse }]} />
+              <Text style={styles.liveBadgeText}>LIVE</Text>
+            </View>
+            <Animated.Text style={[styles.sheetAnswer, { opacity: liveTextOpacity }]}>{LIVE_DETECTIONS[liveIndex]}</Animated.Text>
+            <Pressable onPress={toggleLive} style={styles.sheetActionGhost}>
+              <Ionicons name="stop-circle-outline" size={16} color={colors.textSecondary} />
+              <Text style={styles.sheetActionGhostText}>Stop live detection</Text>
+            </Pressable>
+            <Text style={styles.notSavedText}>
+              {keepAnswer ? "Keep is on — turn it off if you don't want this session remembered." : "Not saved — this is a live narration, not a memory."}
+            </Text>
+          </>
         ) : (
-          <Text style={styles.notSavedText}>Not saved — turn on "Keep" to remember this answer.</Text>
+          <>
+            <View style={styles.sheetQRow}>
+              <Ionicons name="help-circle-outline" size={14} color={colors.textFaint} />
+              <Text style={styles.sheetQ}>{answer.q}</Text>
+            </View>
+            <Text style={styles.sheetAnswer}>{answer.a}</Text>
+            <View style={styles.sheetActions}>
+              <Pressable onPress={dismiss} style={styles.sheetActionGhost}>
+                <Text style={styles.sheetActionGhostText}>Dismiss</Text>
+              </Pressable>
+              <Pressable onPress={ask} style={styles.sheetActionPrimary}>
+                <Ionicons name="mic-outline" size={15} color={colors.white} />
+                <Text style={styles.sheetActionPrimaryText}>Ask again</Text>
+              </Pressable>
+            </View>
+            {saved ? (
+              <View style={styles.savedRow}>
+                <Ionicons name="checkmark-circle" size={14} color={colors.success} />
+                <Text style={styles.savedText}>Saved as a memory</Text>
+              </View>
+            ) : (
+              <Text style={styles.notSavedText}>Not saved — turn on "Keep" to remember this answer.</Text>
+            )}
+          </>
         )}
       </Animated.View>
     </View>
@@ -185,11 +295,35 @@ const styles = StyleSheet.create({
   titlePillText: { color: colors.white, fontSize: 13, fontWeight: "700" },
   keepToggleWrap: { flexDirection: "row", alignItems: "center", gap: 6 },
   keepToggleLabel: { color: colors.white, fontSize: 13, fontWeight: "600" },
-  hintWrap: { position: "absolute", top: "42%", alignSelf: "center" },
-  hintText: { color: "rgba(255,255,255,0.85)", fontSize: 13.5, fontWeight: "600", backgroundColor: "rgba(20,20,20,0.35)", paddingVertical: 8, paddingHorizontal: 16, borderRadius: radius.pill },
+  hintWrap: { position: "absolute", top: "40%", alignSelf: "center", paddingHorizontal: spacing.xl },
+  hintText: {
+    color: "rgba(255,255,255,0.85)",
+    fontSize: 13.5,
+    fontWeight: "600",
+    textAlign: "center",
+    backgroundColor: "rgba(20,20,20,0.35)",
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: radius.pill,
+    overflow: "hidden",
+  },
   askRow: { position: "absolute", bottom: 200, alignSelf: "center", alignItems: "center", gap: 8 },
+  actionCluster: { flexDirection: "row", alignItems: "center", gap: 16 },
   askButtonWrap: {},
   askButton: { width: 68, height: 68, borderRadius: 34, backgroundColor: colors.teal, alignItems: "center", justifyContent: "center", borderWidth: 3, borderColor: "rgba(255,255,255,0.85)" },
+  askButtonDisabled: { opacity: 0.35, borderColor: "rgba(255,255,255,0.4)" },
+  liveToggleButton: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: "rgba(20,20,20,0.45)",
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.3)",
+  },
+  liveToggleButtonActive: { backgroundColor: colors.live, borderColor: colors.live },
+  liveToggleButton_spacer: { width: 44 },
   askCaption: { color: colors.white, fontSize: 13, fontWeight: "600" },
   sheet: {
     position: "absolute",
@@ -205,9 +339,12 @@ const styles = StyleSheet.create({
   sheetHandle: { width: 36, height: 4, borderRadius: 2, backgroundColor: colors.hairline, alignSelf: "center", marginBottom: spacing.sm },
   sheetQRow: { flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 4 },
   sheetQ: { color: colors.textFaint, fontSize: 13, fontStyle: "italic" },
+  liveBadgeRow: { flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 6 },
+  liveDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: colors.live },
+  liveBadgeText: { color: colors.live, fontSize: 13, fontWeight: "800", letterSpacing: 1 },
   sheetAnswer: { color: colors.textPrimary, ...type.headline, marginBottom: spacing.md },
   sheetActions: { flexDirection: "row", gap: 10, marginBottom: spacing.sm },
-  sheetActionGhost: { flex: 1, alignItems: "center", justifyContent: "center", minHeight: 44, borderRadius: radius.pill, borderWidth: 1, borderColor: colors.hairline },
+  sheetActionGhost: { flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6, minHeight: 44, borderRadius: radius.pill, borderWidth: 1, borderColor: colors.hairline, marginBottom: spacing.sm },
   sheetActionGhostText: { color: colors.textSecondary, fontWeight: "700", fontSize: 13.5 },
   sheetActionPrimary: { flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6, minHeight: 44, borderRadius: radius.pill, backgroundColor: colors.teal },
   sheetActionPrimaryText: { color: colors.white, fontWeight: "700", fontSize: 13.5 },
