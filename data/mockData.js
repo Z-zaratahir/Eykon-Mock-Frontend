@@ -120,7 +120,8 @@ export const memoryEvents = [
     id: "ev_0127",
     type: EVENT_TYPES.PERSON,
     title: "Conversation — Career fair",
-    summary: "Spoke with a recruiter from Synapse AI Solutions about the ML internship track.",
+    personName: "Ayesha Raza",
+    summary: "Spoke with Ayesha Raza, a recruiter from Synapse AI Solutions, about the ML internship track.",
     location: "FAST-NUCES Auditorium",
     source: "glasses",
     timestamp: "2026-06-10T13:15:00",
@@ -260,6 +261,26 @@ export const phoneCaptureStats = {
   hoursActive: 9.5,
   storageUsedGb: 1.1,
 };
+
+// Mutators for the per-item privacy actions on Memory Detail (Pin / Hide from
+// search / Delete). This is an in-memory mock store, not a real backend — these
+// mutate the shared array in place so Echoes reflects the change immediately.
+export function toggleEventPinned(id) {
+  const e = memoryEvents.find((x) => x.id === id);
+  if (e) e.pinned = !e.pinned;
+  return e;
+}
+
+export function toggleEventHidden(id) {
+  const e = memoryEvents.find((x) => x.id === id);
+  if (e) e.hidden = !e.hidden;
+  return e;
+}
+
+export function deleteEvent(id) {
+  const idx = memoryEvents.findIndex((x) => x.id === id);
+  if (idx !== -1) memoryEvents.splice(idx, 1);
+}
 
 export const retrievalStats = {
   hitAt5: 93.3,
