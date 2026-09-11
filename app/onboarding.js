@@ -47,7 +47,6 @@ export default function Onboarding() {
         <View style={styles.featureRow}>
           <Feature icon="wifi-outline" label="Offline-first" />
           <Feature icon="hardware-chip-outline" label="On-device" />
-          <Feature icon="globe-outline" label="English + Urdu" />
         </View>
 
         <Pressable style={styles.cta} onPress={() => router.replace("/(tabs)")}>

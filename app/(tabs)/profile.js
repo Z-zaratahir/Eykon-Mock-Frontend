@@ -12,7 +12,6 @@ export default function ProfileScreen() {
   const [localOnly, setLocalOnly] = useState(true);
   const [redactSensitive, setRedactSensitive] = useState(true);
   const [peopleMemory, setPeopleMemory] = useState(false);
-  const [multilingual, setMultilingual] = useState("English + Urdu");
 
   return (
     <ScrollView style={{ flex: 1, backgroundColor: colors.background }} contentContainerStyle={{ paddingBottom: 140 }}>
@@ -27,7 +26,7 @@ export default function ProfileScreen() {
         </LinearGradient>
         <View style={{ flex: 1 }}>
           <Text style={styles.profileName}>Zara</Text>
-          <Text style={styles.profileSub}>{multilingual} · on-device profile</Text>
+          <Text style={styles.profileSub}>On-device profile</Text>
         </View>
         <View style={styles.statPill}>
           <Text style={styles.statPillNumber}>{phoneCaptureStats.eventsToday}</Text>
@@ -74,21 +73,6 @@ export default function ProfileScreen() {
           value={peopleMemory}
           onChange={setPeopleMemory}
         />
-      </View>
-
-      <View style={styles.section}>
-        <Text style={styles.sectionLabel}>Language</Text>
-        <View style={styles.langRow}>
-          {["English", "Urdu", "English + Urdu"].map((l) => {
-            const active = multilingual === l;
-            return (
-              <Pressable key={l} onPress={() => setMultilingual(l)} style={[styles.langChip, active && styles.langChipActive]}>
-                <Text style={[styles.langChipText, active && { color: colors.background }]}>{l}</Text>
-              </Pressable>
-            );
-          })}
-        </View>
-        <Text style={styles.hintText}>Voice conversations adapt to mixed Urdu-English, hands-free.</Text>
       </View>
 
       <View style={styles.section}>
@@ -174,11 +158,6 @@ const styles = StyleSheet.create({
   toggleIconWrap: { width: 32, height: 32, borderRadius: 16, backgroundColor: colors.tealTint, alignItems: "center", justifyContent: "center" },
   toggleTitle: { color: colors.textPrimary, fontSize: 13.5, fontWeight: "700" },
   toggleDesc: { color: colors.textFaint, fontSize: 13, marginTop: 2, lineHeight: 15 },
-  langRow: { flexDirection: "row", gap: 8, marginBottom: 8 },
-  langChip: { flex: 1, alignItems: "center", paddingVertical: 10, borderRadius: radius.md, backgroundColor: colors.backgroundAlt, borderWidth: 1, borderColor: colors.hairline },
-  langChipActive: { backgroundColor: colors.teal, borderColor: colors.teal },
-  langChipText: { color: colors.textSecondary, fontSize: 13, fontWeight: "700" },
-  hintText: { color: colors.textFaint, fontSize: 13 },
   navCard: { backgroundColor: colors.backgroundAlt, borderRadius: radius.lg, borderWidth: 1, borderColor: colors.hairline },
   navRow: { flexDirection: "row", alignItems: "center", gap: spacing.sm, padding: spacing.md, minHeight: 44 },
   aboutRowBorder: { borderBottomWidth: 1, borderBottomColor: colors.hairline },

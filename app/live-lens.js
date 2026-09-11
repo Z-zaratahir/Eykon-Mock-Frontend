@@ -11,11 +11,12 @@ import { colors, radius, spacing, type } from "../constants/theme";
 // Live Lens is the concrete answer to "the phone is its own eye too" (UX
 // plan, Section 4) — distinct from Capture: nothing is saved by default,
 // this is a real-time "point and ask right now" flow (your proposal's
-// secondary mode: "what is this plant," "translate this sign").
+// secondary mode: "what is this plant," "what does this sign say").
+// English only for now — no language switching.
 const SAMPLE_ANSWERS = [
   { q: "What is this?", a: "That looks like a ceramic mug on a wooden desk — nothing else notable in frame." },
   { q: "What is this plant?", a: "This looks like a peace lily — likes indirect light and a weekly watering." },
-  { q: "Translate this sign", a: "The sign reads \"Exit\" — خروج in Urdu." },
+  { q: "What's the price on this tag?", a: "Rs. 1,200 — marked down from Rs. 1,500." },
   { q: "What does this say?", a: "It's a warning label: \"Caution — hot surface. Do not touch.\"" },
 ];
 
