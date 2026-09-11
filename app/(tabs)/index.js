@@ -76,19 +76,28 @@ function Bubble({ item }) {
 // 10th question of the day shouldn't wait for letters to type out, so every
 // later reply is a normal-weight bubble (see Bubble above). This is a
 // deliberate efficiency-for-frequent-users trade-off, not an oversight.
-function SessionGreeting({ text, reduceMotion }) {
+function SessionGreeting({ text, reduceMotion, onDone }) {
   const [count, setCount] = useState(reduceMotion ? text.length : 0);
+  const doneRef = useRef(false);
 
   useEffect(() => {
     if (reduceMotion) {
       setCount(text.length);
+      doneRef.current = true;
+      onDone?.();
       return;
     }
     let i = 0;
     const id = setInterval(() => {
       i += 2;
       setCount(Math.min(i, text.length));
-      if (i >= text.length) clearInterval(id);
+      if (i >= text.length) {
+        clearInterval(id);
+        if (!doneRef.current) {
+          doneRef.current = true;
+          onDone?.();
+        }
+      }
     }, 16);
     return () => clearInterval(id);
   }, [text, reduceMotion]);
@@ -105,6 +114,10 @@ export default function ChatScreen() {
   const hasGreeting = initialMessages[0]?.role === "assistant";
   const greeting = hasGreeting ? initialMessages[0] : null;
   const [messages, setMessages] = useState(hasGreeting ? initialMessages.slice(1) : initialMessages);
+  // While the greeting is still typing out, the list must stay put at the
+  // top so it's actually visible — only scroll down to the live conversation
+  // once it's finished (see the FlatList's onContentSizeChange below).
+  const [greetingDone, setGreetingDone] = useState(!greeting);
   const [input, setInput] = useState("");
   const [listening, setListening] = useState(false);
   const [thinking, setThinking] = useState(false);
@@ -135,6 +148,19 @@ export default function ChatScreen() {
   }, []);
 
   const scrollToEnd = () => setTimeout(() => listRef.current?.scrollToEnd({ animated: true }), 80);
+
+  // FlatList's onContentSizeChange fires on mount and on every size change
+  // while the greeting is typing — left unguarded it snaps straight to the
+  // bottom before the greeting is ever seen. Ignore it until the greeting's
+  // own onDone has fired once.
+  const handleContentSizeChange = () => {
+    if (greetingDone) scrollToEnd();
+  };
+
+  const finishGreeting = useCallback(() => {
+    setGreetingDone(true);
+    scrollToEnd();
+  }, []);
 
   const startListening = useCallback(() => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -237,8 +263,8 @@ export default function ChatScreen() {
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => <Bubble item={item} />}
         contentContainerStyle={{ padding: spacing.lg, paddingBottom: spacing.xl }}
-        onContentSizeChange={scrollToEnd}
-        ListHeaderComponent={greeting ? <SessionGreeting text={greeting.text} reduceMotion={reduceMotion} /> : null}
+        onContentSizeChange={handleContentSizeChange}
+        ListHeaderComponent={greeting ? <SessionGreeting text={greeting.text} reduceMotion={reduceMotion} onDone={finishGreeting} /> : null}
         ListFooterComponent={
           thinking ? (
             <View style={styles.bubbleRow}>
