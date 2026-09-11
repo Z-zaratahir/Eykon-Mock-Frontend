@@ -6,7 +6,11 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { router } from "expo-router";
 import * as Haptics from "expo-haptics";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import { useSharedValue, runOnJS } from "react-native-reanimated";
 import { colors, radius, spacing, type } from "../constants/theme";
+
+const clamp = (v, min, max) => Math.min(max, Math.max(min, v));
 
 // Live Lens is the concrete answer to "the phone is its own eye too" (UX
 // plan, Section 4) — distinct from Capture: nothing is saved by default,
@@ -37,6 +41,18 @@ const LIVE_UPDATE_MS = 3500;
 export default function LiveLens() {
   const insets = useSafeAreaInsets();
   const [permission, requestPermission] = useCameraPermissions();
+
+  // Pinch-to-zoom — undocumented on purpose, no slider/UI, just the gesture.
+  const [zoom, setZoom] = useState(0);
+  const baseZoom = useSharedValue(0);
+  const pinchGesture = Gesture.Pinch()
+    .onUpdate((e) => {
+      runOnJS(setZoom)(clamp(baseZoom.value + (e.scale - 1) * 0.5, 0, 1));
+    })
+    .onEnd((e) => {
+      baseZoom.value = clamp(baseZoom.value + (e.scale - 1) * 0.5, 0, 1);
+    });
+
   const [state, setState] = useState("idle"); // idle | listening | thinking | answered
   const [answerIndex, setAnswerIndex] = useState(0);
   const [liveMode, setLiveMode] = useState(false);
@@ -171,7 +187,9 @@ export default function LiveLens() {
 
   return (
     <View style={styles.container}>
-      <CameraView style={StyleSheet.absoluteFill} facing="back" />
+      <GestureDetector gesture={pinchGesture}>
+        <CameraView style={StyleSheet.absoluteFill} facing="back" zoom={zoom} />
+      </GestureDetector>
 
       <LinearGradient colors={["rgba(20,20,20,0.55)", "transparent"]} style={[styles.topBar, { paddingTop: insets.top + 10 }]}>
         <Pressable onPress={() => router.back()} style={styles.iconButton} accessibilityLabel="Close Live Lens">

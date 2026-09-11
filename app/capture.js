@@ -6,8 +6,12 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { router, useLocalSearchParams } from "expo-router";
 import * as Haptics from "expo-haptics";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import { useSharedValue, runOnJS } from "react-native-reanimated";
 import { colors, radius, spacing, type } from "../constants/theme";
 import { glassesDevice } from "../data/mockData";
+
+const clamp = (v, min, max) => Math.min(max, Math.max(min, v));
 
 // This is the ONE real capture screen (expo-camera) — the tab bar's center FAB
 // and the Capture tab both route here now. See components/TabBar.js.
@@ -26,6 +30,17 @@ export default function CaptureModal() {
   const [reduceMotion, setReduceMotion] = useState(false);
   const timerRef = useRef(null);
   const dismissRef = useRef(null);
+
+  // Pinch-to-zoom — undocumented on purpose, no slider/UI, just the gesture.
+  const [zoom, setZoom] = useState(0);
+  const baseZoom = useSharedValue(0);
+  const pinchGesture = Gesture.Pinch()
+    .onUpdate((e) => {
+      runOnJS(setZoom)(clamp(baseZoom.value + (e.scale - 1) * 0.5, 0, 1));
+    })
+    .onEnd((e) => {
+      baseZoom.value = clamp(baseZoom.value + (e.scale - 1) * 0.5, 0, 1);
+    });
   const pulse = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
@@ -125,7 +140,9 @@ export default function CaptureModal() {
       {mode === "voice" ? (
         <VoiceCapture recording={recording} elapsed={formatElapsed()} pulse={pulse} reduceMotion={reduceMotion} />
       ) : (
-        <CameraView style={StyleSheet.absoluteFill} facing={facing} mode={mode === "video" ? "video" : "picture"} />
+        <GestureDetector gesture={pinchGesture}>
+          <CameraView style={StyleSheet.absoluteFill} facing={facing} mode={mode === "video" ? "video" : "picture"} zoom={zoom} />
+        </GestureDetector>
       )}
 
       <LinearGradient colors={["rgba(20,20,20,0.55)", "transparent"]} style={[styles.topBar, { paddingTop: insets.top + 10 }]}>
@@ -148,7 +165,15 @@ export default function CaptureModal() {
         )}
 
         {mode !== "voice" ? (
-          <Pressable onPress={() => setFacing((f) => (f === "back" ? "front" : "back"))} style={styles.closeButton} accessibilityLabel="Flip camera">
+          <Pressable
+            onPress={() => {
+              setFacing((f) => (f === "back" ? "front" : "back"));
+              baseZoom.value = 0;
+              setZoom(0);
+            }}
+            style={styles.closeButton}
+            accessibilityLabel="Flip camera"
+          >
             <Ionicons name="camera-reverse-outline" size={22} color={colors.white} />
           </Pressable>
         ) : (
