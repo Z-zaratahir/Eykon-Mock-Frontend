@@ -273,8 +273,12 @@ export default function EchoesScreen() {
           contentContainerStyle={{ paddingHorizontal: spacing.lg, paddingBottom: 140, paddingTop: spacing.sm }}
           ListEmptyComponent={
             <View style={styles.empty}>
-              <Ionicons name="moon-outline" size={28} color={colors.textFaint} />
-              <Text style={styles.emptyText}>Nothing matches yet. Try a different search or filter.</Text>
+              <Ionicons name={memoryEvents.length === 0 ? "sparkles-outline" : "moon-outline"} size={28} color={colors.textFaint} />
+              <Text style={styles.emptyText}>
+                {memoryEvents.length === 0
+                  ? "Nothing captured yet. Tap the camera button to add your first memory."
+                  : "Nothing matches yet. Try a different search or filter."}
+              </Text>
             </View>
           }
           stickySectionHeadersEnabled={false}

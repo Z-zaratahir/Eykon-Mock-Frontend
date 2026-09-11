@@ -281,7 +281,7 @@ export default function ChatScreen() {
             returnKeyType="send"
           />
           {input.length > 0 && (
-            <Pressable onPress={() => send()} style={styles.sendButton}>
+            <Pressable onPress={() => send()} style={styles.sendButton} hitSlop={6} accessibilityLabel="Send">
               <Ionicons name="arrow-up" size={18} color={colors.white} />
             </Pressable>
           )}

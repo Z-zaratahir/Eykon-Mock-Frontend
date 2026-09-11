@@ -110,7 +110,7 @@ function DigestPlayer({ digest }) {
           <Text style={styles.digestTitle}>Today's audio digest</Text>
           <Text style={styles.digestSub}>~{digest.durationSec}s spoken recap</Text>
         </View>
-        <Pressable onPress={() => setPlaying((p) => !p)} style={styles.digestPlayButton} accessibilityLabel={playing ? "Pause digest" : "Play digest"}>
+        <Pressable onPress={() => setPlaying((p) => !p)} style={styles.digestPlayButton} accessibilityLabel={playing ? "Pause digest" : "Play digest"} hitSlop={8}>
           <Ionicons name={playing ? "pause" : "play"} size={16} color={colors.white} style={!playing && { marginLeft: 2 }} />
         </Pressable>
       </View>
@@ -136,7 +136,7 @@ function HistoryRow({ item }) {
 
   return (
     <View style={styles.historyRow}>
-      <Pressable onPress={play} style={[styles.historyPlay, playing && { backgroundColor: colors.live }]} accessibilityLabel="Replay">
+      <Pressable onPress={play} style={[styles.historyPlay, playing && { backgroundColor: colors.live }]} accessibilityLabel="Replay" hitSlop={8}>
         <Ionicons name={playing ? "volume-high" : "play"} size={14} color={colors.white} style={!playing && { marginLeft: 1 }} />
       </Pressable>
       <View style={{ flex: 1 }}>

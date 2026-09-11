@@ -35,10 +35,19 @@ function mostRecalled() {
   return event ? { event, count: bestCount } : null;
 }
 
+const FIRST_WEEK_DAYS = 7;
+
 export default function InsightsScreen() {
   const insets = useSafeAreaInsets();
   const recalled = useMemo(mostRecalled, []);
   const onThisDay = useMemo(() => memoryEvents.slice().sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))[0], []);
+
+  // "Still learning" first-week state (build brief T16) — Insights needs real
+  // history to be meaningful, so below a week of data (or almost no memories
+  // yet) it says so honestly instead of showing a hollow "On this day" for a
+  // memory from yesterday.
+  const historyDays = onThisDay ? Math.round((Date.now() - new Date(onThisDay.timestamp).getTime()) / 86400000) : 0;
+  const stillLearning = memoryEvents.length < 3 || historyDays < FIRST_WEEK_DAYS;
 
   return (
     <ScrollView style={{ flex: 1, backgroundColor: colors.background }} contentContainerStyle={{ paddingBottom: 60 }}>
@@ -68,49 +77,54 @@ export default function InsightsScreen() {
         </View>
       </View>
 
-      {recalled && (
-        <View style={{ paddingHorizontal: spacing.lg, marginTop: spacing.lg }}>
-          <Text style={styles.sectionLabel}>Most recalled</Text>
-          <Pressable onPress={() => router.push(`/memory/${recalled.event.id}`)} style={styles.card}>
-            <View style={[styles.cardIconWrap, { backgroundColor: (TYPE_META[recalled.event.type] || TYPE_META[EVENT_TYPES.SCENE]).tint }]}>
-              <Ionicons name={recalled.event.icon} size={20} color={(TYPE_META[recalled.event.type] || TYPE_META[EVENT_TYPES.SCENE]).color} />
-            </View>
-            <View style={{ flex: 1 }}>
-              <Text style={styles.cardTitle}>{recalled.event.title}</Text>
-              <Text style={styles.cardMeta}>
-                Asked about {recalled.count} time{recalled.count === 1 ? "" : "s"} this session
-              </Text>
-            </View>
-            <Ionicons name="chevron-forward" size={18} color={colors.textFaint} />
-          </Pressable>
-        </View>
-      )}
-
-      {onThisDay && (
-        <View style={{ paddingHorizontal: spacing.lg, marginTop: spacing.lg }}>
-          <Text style={styles.sectionLabel}>On this day</Text>
-          <Pressable onPress={() => router.push(`/memory/${onThisDay.id}`)} style={[styles.card, styles.onThisDayCard]}>
-            <View style={styles.cardIconWrap}>
-              <Ionicons name="sparkles" size={18} color={colors.white} />
-            </View>
-            <View style={{ flex: 1 }}>
-              <Text style={styles.cardTitle}>{onThisDay.title}</Text>
-              <Text style={styles.cardMeta}>From {relativeAge(onThisDay.timestamp)} — {onThisDay.location}</Text>
-            </View>
-            <Ionicons name="chevron-forward" size={18} color={colors.textFaint} />
-          </Pressable>
-        </View>
-      )}
-
-      <View style={{ paddingHorizontal: spacing.lg, marginTop: spacing.lg }}>
-        <Text style={styles.sectionLabel}>Still learning</Text>
-        <View style={styles.hintCard}>
-          <Ionicons name="information-circle-outline" size={16} color={colors.textFaint} />
-          <Text style={styles.hintText}>
-            Insights get richer the more Eykon sees — check back daily for a fuller "On this day" trail and sharper recall stats.
+      {stillLearning ? (
+        <View style={styles.learningWrap}>
+          <View style={styles.learningIconWrap}>
+            <Ionicons name="hourglass-outline" size={26} color={colors.teal} />
+          </View>
+          <Text style={styles.learningTitle}>Still learning</Text>
+          <Text style={styles.learningText}>
+            Eykon needs about a week of moments before recall stats and "On this day" resurfacing are worth showing. Keep
+            capturing — this fills in on its own.
           </Text>
         </View>
-      </View>
+      ) : (
+        <>
+          {recalled && (
+            <View style={{ paddingHorizontal: spacing.lg, marginTop: spacing.lg }}>
+              <Text style={styles.sectionLabel}>Most recalled</Text>
+              <Pressable onPress={() => router.push(`/memory/${recalled.event.id}`)} style={styles.card}>
+                <View style={[styles.cardIconWrap, { backgroundColor: (TYPE_META[recalled.event.type] || TYPE_META[EVENT_TYPES.SCENE]).tint }]}>
+                  <Ionicons name={recalled.event.icon} size={20} color={(TYPE_META[recalled.event.type] || TYPE_META[EVENT_TYPES.SCENE]).color} />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.cardTitle}>{recalled.event.title}</Text>
+                  <Text style={styles.cardMeta}>
+                    Asked about {recalled.count} time{recalled.count === 1 ? "" : "s"} this session
+                  </Text>
+                </View>
+                <Ionicons name="chevron-forward" size={18} color={colors.textFaint} />
+              </Pressable>
+            </View>
+          )}
+
+          {onThisDay && (
+            <View style={{ paddingHorizontal: spacing.lg, marginTop: spacing.lg }}>
+              <Text style={styles.sectionLabel}>On this day</Text>
+              <Pressable onPress={() => router.push(`/memory/${onThisDay.id}`)} style={[styles.card, styles.onThisDayCard]}>
+                <View style={styles.cardIconWrap}>
+                  <Ionicons name="sparkles" size={18} color={colors.white} />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.cardTitle}>{onThisDay.title}</Text>
+                  <Text style={styles.cardMeta}>From {relativeAge(onThisDay.timestamp)} — {onThisDay.location}</Text>
+                </View>
+                <Ionicons name="chevron-forward" size={18} color={colors.textFaint} />
+              </Pressable>
+            </View>
+          )}
+        </>
+      )}
     </ScrollView>
   );
 }
@@ -131,6 +145,8 @@ const styles = StyleSheet.create({
   cardIconWrap: { width: 44, height: 44, borderRadius: 22, alignItems: "center", justifyContent: "center", backgroundColor: colors.teal },
   cardTitle: { color: colors.textPrimary, fontSize: 14.5, fontWeight: "700" },
   cardMeta: { color: colors.textSecondary, fontSize: 13, marginTop: 2 },
-  hintCard: { flexDirection: "row", gap: 10, backgroundColor: colors.backgroundAlt, borderRadius: radius.lg, padding: spacing.md, borderWidth: 1, borderColor: colors.hairline },
-  hintText: { color: colors.textSecondary, fontSize: 13, flex: 1, lineHeight: 18 },
+  learningWrap: { alignItems: "center", paddingHorizontal: spacing.xl, paddingTop: spacing.xl, gap: 8 },
+  learningIconWrap: { width: 56, height: 56, borderRadius: 28, backgroundColor: colors.tealTintFaint, alignItems: "center", justifyContent: "center", marginBottom: 4 },
+  learningTitle: { color: colors.textPrimary, ...type.headline },
+  learningText: { color: colors.textSecondary, ...type.body, textAlign: "center" },
 });
