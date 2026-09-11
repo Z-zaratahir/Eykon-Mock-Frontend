@@ -53,12 +53,13 @@ function groupByDay(events) {
 // a static waveform glyph for audio.
 function EventThumb({ event, meta }) {
   if (event.type === EVENT_TYPES.TEXT) {
+    // A dashed "scanned" motif rather than cramming the OCR excerpt itself in
+    // here — at a 52pt thumbnail there's no room for it at the 13px caption
+    // floor. The actual excerpt gets its own readable-size row below (see
+    // EventCard's ocrPreview).
     return (
       <View style={[styles.thumb, styles.scanThumb]}>
-        <Ionicons name="scan-outline" size={14} color={meta.color} />
-        <Text style={styles.scanThumbText} numberOfLines={2}>
-          {event.ocrText || "Scanned"}
-        </Text>
+        <Ionicons name="scan-outline" size={20} color={meta.color} />
       </View>
     );
   }
@@ -108,6 +109,14 @@ function EventCard({ event }) {
         <Text style={styles.cardSummary} numberOfLines={2}>
           {event.summary}
         </Text>
+        {event.ocrText ? (
+          <View style={styles.ocrPreview}>
+            <Ionicons name="scan-outline" size={12} color={colors.tealDark} />
+            <Text style={styles.ocrPreviewText} numberOfLines={1}>
+              {event.ocrText}
+            </Text>
+          </View>
+        ) : null}
         <View style={styles.tagRow}>
           {event.pinned ? <Ionicons name="bookmark" size={11} color={colors.teal} /> : null}
           <Ionicons name="location-outline" size={11} color={colors.textFaint} />
@@ -294,7 +303,7 @@ const styles = StyleSheet.create({
     borderColor: colors.hairline,
   },
   statNumber: { color: colors.teal, fontSize: 17, fontWeight: "700" },
-  statLabel: { color: colors.textFaint, fontSize: 10.5, marginTop: 2 },
+  statLabel: { color: colors.textFaint, fontSize: 13, marginTop: 2 },
   searchRow: { flexDirection: "row", gap: 8, marginBottom: spacing.sm },
   searchBar: {
     flex: 1,
@@ -326,7 +335,7 @@ const styles = StyleSheet.create({
     borderColor: colors.hairline,
   },
   filterChipActive: { backgroundColor: colors.teal, borderColor: colors.teal },
-  filterChipText: { color: colors.textSecondary, fontSize: 12.5, fontWeight: "600" },
+  filterChipText: { color: colors.textSecondary, fontSize: 13, fontWeight: "600" },
   sectionHeaderWrap: { flexDirection: "row", alignItems: "center", gap: 10, marginBottom: 10, marginTop: 6 },
   sectionHeader: { color: colors.textSecondary, fontSize: 13, fontWeight: "700" },
   sectionLine: { flex: 1, height: 1, backgroundColor: colors.hairline },
@@ -352,8 +361,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  scanThumb: { backgroundColor: colors.background, borderWidth: 1, borderColor: colors.hairline, borderStyle: "dashed", paddingHorizontal: 4, gap: 2 },
-  scanThumbText: { color: colors.textSecondary, fontSize: 8.5, fontFamily: "monospace", textAlign: "center" },
+  scanThumb: { backgroundColor: colors.background, borderWidth: 1, borderColor: colors.hairline, borderStyle: "dashed" },
   avatarInitials: { fontSize: 17, fontWeight: "700" },
   staticWave: { flexDirection: "row", alignItems: "center", gap: 2, height: 20 },
   staticWaveBar: { width: 2.5, borderRadius: 1.5 },
@@ -371,14 +379,16 @@ const styles = StyleSheet.create({
   },
   cardTopRow: { flexDirection: "row", justifyContent: "space-between", gap: 8 },
   cardTitle: { color: colors.textPrimary, fontSize: 14.5, fontWeight: "700", flexShrink: 1 },
-  cardTime: { color: colors.textFaint, fontSize: 11 },
+  cardTime: { color: colors.textFaint, fontSize: 13 },
   cardSummary: { color: colors.textSecondary, fontSize: 13, marginTop: 3, lineHeight: 18 },
+  ocrPreview: { flexDirection: "row", alignItems: "center", gap: 5, backgroundColor: colors.tealTint, alignSelf: "flex-start", borderRadius: 8, paddingVertical: 3, paddingHorizontal: 8, marginTop: 6 },
+  ocrPreviewText: { color: colors.tealDark, fontSize: 13, fontFamily: "monospace" },
   tagRow: { flexDirection: "row", alignItems: "center", gap: 4, marginTop: 6 },
-  locationText: { color: colors.textFaint, fontSize: 11 },
+  locationText: { color: colors.textFaint, fontSize: 13 },
   empty: { alignItems: "center", paddingTop: 60, gap: 10 },
   emptyText: { color: colors.textFaint, fontSize: 13, textAlign: "center", paddingHorizontal: 40 },
   mapCard: { flex: 1, backgroundColor: colors.backgroundAlt, borderRadius: radius.xl, borderWidth: 1, borderColor: colors.hairline, overflow: "hidden", marginBottom: spacing.lg },
   mapGrid: { flex: 1, position: "relative" },
   mapPin: { position: "absolute", width: 26, height: 26, borderRadius: 13, alignItems: "center", justifyContent: "center", borderWidth: 2, borderColor: colors.background, marginLeft: -13, marginTop: -13 },
-  mapHint: { color: colors.textFaint, fontSize: 11.5, textAlign: "center", paddingVertical: spacing.sm, borderTopWidth: 1, borderTopColor: colors.hairline },
+  mapHint: { color: colors.textFaint, fontSize: 13, textAlign: "center", paddingVertical: spacing.sm, borderTopWidth: 1, borderTopColor: colors.hairline },
 });

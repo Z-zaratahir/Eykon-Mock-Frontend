@@ -369,7 +369,7 @@ const styles = StyleSheet.create({
   topEyebrow: { color: colors.teal, ...type.label, letterSpacing: 2 },
   statusRow: { flexDirection: "row", alignItems: "center", gap: 6, marginTop: 4 },
   liveDot: { width: 6, height: 6, borderRadius: 3 },
-  statusText: { color: colors.textSecondary, fontSize: 12.5 },
+  statusText: { color: colors.textSecondary, fontSize: 13 },
   iconButton: {
     width: 44,
     height: 44,
@@ -398,11 +398,11 @@ const styles = StyleSheet.create({
   },
   bubbleText: { color: colors.textPrimary, ...type.body },
   thinkingBubble: { paddingVertical: 14 },
-  timeText: { color: colors.textFaint, fontSize: 10.5, marginTop: 4, marginLeft: 4 },
+  timeText: { color: colors.textFaint, fontSize: 13, marginTop: 4, marginLeft: 4 },
   trace: { marginTop: 6, gap: 6 },
   traceRow: { flexDirection: "row", alignItems: "center", gap: 6, paddingVertical: 2 },
-  traceText: { color: colors.textFaint, fontSize: 11 },
-  traceLink: { color: colors.tealDark, fontSize: 11, fontWeight: "700" },
+  traceText: { color: colors.textFaint, fontSize: 13 },
+  traceLink: { color: colors.tealDark, fontSize: 13, fontWeight: "700" },
   sourceChip: {
     flexDirection: "row",
     alignItems: "center",
@@ -416,7 +416,7 @@ const styles = StyleSheet.create({
     alignSelf: "flex-start",
     maxWidth: 260,
   },
-  sourceChipText: { color: colors.textSecondary, fontSize: 12, flexShrink: 1 },
+  sourceChipText: { color: colors.textSecondary, fontSize: 13, flexShrink: 1 },
   promptRow: { flexDirection: "row", flexWrap: "wrap", gap: 8, paddingHorizontal: spacing.lg, paddingBottom: spacing.sm },
   promptChip: {
     backgroundColor: colors.backgroundAlt,
@@ -426,7 +426,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.hairline,
   },
-  promptChipText: { color: colors.textSecondary, fontSize: 12.5 },
+  promptChipText: { color: colors.textSecondary, fontSize: 13 },
   inputBar: {
     flexDirection: "row",
     alignItems: "center",

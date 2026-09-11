@@ -76,7 +76,7 @@ export const type = {
   body: { fontFamily: fonts.bodyRegular, fontSize: 16, fontWeight: "400", lineHeight: 22 },
   bodyMedium: { fontFamily: fonts.bodyMedium, fontSize: 16, fontWeight: "500", lineHeight: 22 },
   caption: { fontFamily: fonts.bodyMedium, fontSize: 13, fontWeight: "500", lineHeight: 17 },
-  label: { fontFamily: fonts.bodySemibold, fontSize: 11, fontWeight: "700", letterSpacing: 0.6 },
+  label: { fontFamily: fonts.bodySemibold, fontSize: 13, fontWeight: "700", letterSpacing: 0.6 },
   mono: { fontSize: 13, fontFamily: "monospace" },
 };
 

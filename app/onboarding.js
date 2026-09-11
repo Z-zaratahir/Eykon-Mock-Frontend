@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
     borderColor: colors.hairline,
   },
   wordmark: { color: colors.textPrimary, fontSize: 34, fontWeight: "800", letterSpacing: 6 },
-  tagline: { color: colors.textSecondary, fontSize: 14.5, marginTop: 8, marginBottom: spacing.xl, textAlign: "center" },
+  tagline: { color: colors.textSecondary, fontSize: 16, marginTop: 8, marginBottom: spacing.xl, textAlign: "center" },
   exampleCard: {
     width: "100%",
     backgroundColor: colors.backgroundAlt,
@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
     borderColor: colors.hairline,
   },
   exampleRow: { flexDirection: "row", alignItems: "flex-start", gap: 10 },
-  exampleText: { color: colors.textSecondary, fontSize: 13, flex: 1, lineHeight: 18 },
+  exampleText: { color: colors.textSecondary, fontSize: 16, flex: 1, lineHeight: 22 },
   exampleDivider: { height: 1, backgroundColor: colors.hairline, marginVertical: 10, marginLeft: 26 },
   featureRow: { flexDirection: "row", gap: 10, marginBottom: spacing.lg, width: "100%" },
   featureItem: {
@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.hairline,
   },
-  featureLabel: { color: colors.textSecondary, fontSize: 11, fontWeight: "600" },
+  featureLabel: { color: colors.textSecondary, fontSize: 13, fontWeight: "600" },
   cta: {
     flexDirection: "row",
     alignItems: "center",

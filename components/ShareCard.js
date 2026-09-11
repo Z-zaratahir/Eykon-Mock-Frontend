@@ -61,11 +61,11 @@ const styles = StyleSheet.create({
   brandText: { color: colors.textPrimary, fontSize: 13, fontWeight: "800", letterSpacing: 2 },
   iconWrap: { width: 56, height: 56, borderRadius: 28, alignItems: "center", justifyContent: "center", marginBottom: spacing.md },
   title: { color: colors.textPrimary, ...type.headline, marginBottom: 4 },
-  meta: { color: colors.textFaint, fontSize: 12, marginBottom: spacing.md },
+  meta: { color: colors.textFaint, fontSize: 13, marginBottom: spacing.md },
   summary: { color: colors.textSecondary, ...type.body, marginBottom: spacing.md },
   ocrPill: { flexDirection: "row", alignItems: "center", gap: 8, backgroundColor: colors.tealTint, borderRadius: radius.md, padding: spacing.sm, marginBottom: spacing.md },
   ocrText: { color: colors.tealDark, fontFamily: "monospace", fontSize: 13.5, fontWeight: "600", flexShrink: 1 },
   footer: { marginTop: spacing.xs },
   footerLine: { height: 1, backgroundColor: colors.hairline, marginBottom: spacing.sm },
-  footerText: { color: colors.textFaint, fontSize: 11, textAlign: "center" },
+  footerText: { color: colors.textFaint, fontSize: 13, textAlign: "center" },
 });
