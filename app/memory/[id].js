@@ -1,12 +1,15 @@
 import { useEffect, useRef, useState } from "react";
-import { View, Text, StyleSheet, ScrollView, Pressable, Animated, Alert } from "react-native";
+import { View, Text, StyleSheet, ScrollView, Pressable, Animated, Alert, Platform } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams, router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as Clipboard from "expo-clipboard";
 import * as Haptics from "expo-haptics";
+import { captureRef } from "react-native-view-shot";
+import * as Sharing from "expo-sharing";
 import { colors, radius, spacing, type } from "../../constants/theme";
 import { Badge } from "../../components/ui";
+import MemoryShareCard from "../../components/ShareCard";
 import { memoryEvents, EVENT_TYPES, TYPE_META, toggleEventPinned, toggleEventHidden, deleteEvent } from "../../data/mockData";
 
 function AudioPlayer({ event }) {
@@ -77,7 +80,9 @@ export default function MemoryDetail() {
   const insets = useSafeAreaInsets();
   const [event, setEvent] = useState(() => memoryEvents.find((e) => e.id === id) || memoryEvents[0]);
   const [copied, setCopied] = useState(false);
+  const [sharing, setSharing] = useState(false);
   const copyTimer = useRef(null);
+  const shareCardRef = useRef(null);
 
   useEffect(() => () => clearTimeout(copyTimer.current), []);
 
@@ -106,6 +111,29 @@ export default function MemoryDetail() {
 
   const askFollowUp = () => {
     router.push({ pathname: "/(tabs)", params: { memoryId: event.id } });
+  };
+
+  // Shareable memory card export (build brief T13) — renders the off-screen
+  // branded card below, captures it as a PNG, and hands it to the native
+  // share sheet. Great for a defense demo: a clean, screenshot-worthy export
+  // of a single recalled memory.
+  const handleShare = async () => {
+    if (sharing) return;
+    setSharing(true);
+    try {
+      const available = Platform.OS === "web" ? false : await Sharing.isAvailableAsync();
+      if (!available) {
+        Alert.alert("Sharing isn't available", "This device can't open the share sheet right now.");
+        return;
+      }
+      const uri = await captureRef(shareCardRef, { format: "png", quality: 1 });
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      await Sharing.shareAsync(uri, { mimeType: "image/png", dialogTitle: "Share this memory" });
+    } catch (err) {
+      Alert.alert("Couldn't create the share image", "Please try again.");
+    } finally {
+      setSharing(false);
+    }
   };
 
   const handlePin = () => {
@@ -138,12 +166,22 @@ export default function MemoryDetail() {
   return (
     <View style={{ flex: 1, backgroundColor: colors.background }}>
       <View style={[styles.hero, { paddingTop: insets.top + 10, backgroundColor: meta.tint }]}>
-        <Pressable onPress={() => router.back()} style={styles.backButton} accessibilityLabel="Back">
-          <Ionicons name="chevron-back" size={22} color={colors.textPrimary} />
-        </Pressable>
+        <View style={styles.heroTopRow}>
+          <Pressable onPress={() => router.back()} style={styles.backButton} accessibilityLabel="Back">
+            <Ionicons name="chevron-back" size={22} color={colors.textPrimary} />
+          </Pressable>
+          <Pressable onPress={handleShare} style={styles.backButton} accessibilityLabel="Share this memory" disabled={sharing}>
+            {sharing ? <Ionicons name="hourglass-outline" size={20} color={colors.textPrimary} /> : <Ionicons name="share-outline" size={20} color={colors.textPrimary} />}
+          </Pressable>
+        </View>
         <View style={styles.heroIconWrap}>
           <Ionicons name={event.icon} size={40} color={meta.color} />
         </View>
+      </View>
+
+      {/* Off-screen — captured by handleShare, never actually shown. */}
+      <View style={styles.offscreen} pointerEvents="none">
+        <MemoryShareCard ref={shareCardRef} event={event} meta={meta} />
       </View>
 
       <ScrollView contentContainerStyle={{ padding: spacing.lg, paddingBottom: 60 }}>
@@ -242,6 +280,8 @@ function Row({ label, value, mono, last }) {
 
 const styles = StyleSheet.create({
   hero: { height: 190, justifyContent: "space-between", paddingHorizontal: spacing.lg, paddingBottom: spacing.lg },
+  heroTopRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
+  offscreen: { position: "absolute", top: 0, left: -2000 },
   backButton: {
     width: 44,
     height: 44,

@@ -243,6 +243,41 @@ export const suggestedPrompts = [
   "What did the professor write about entropy?",
 ];
 
+// Past voice queries + spoken responses — Voice & Sounds' "replay any past
+// voice query" list (UX plan, Section 4).
+export const voiceHistory = [
+  {
+    id: "v1",
+    query: "Where did I leave my keys?",
+    response: "On the hallway console table, right by the front door.",
+    timestamp: "2026-06-14T08:10:00",
+    durationSec: 4,
+  },
+  {
+    id: "v2",
+    query: "What was that Wi-Fi password?",
+    response: "Xk9#mPq2 — from the marketing sync in Conference Room B.",
+    timestamp: "2026-06-14T11:25:00",
+    durationSec: 5,
+  },
+  {
+    id: "v3",
+    query: "What did the professor write about entropy?",
+    response: "Delta S equals Q over T, for a reversible process — from Thursday's lecture.",
+    timestamp: "2026-06-13T14:45:00",
+    durationSec: 6,
+  },
+];
+
+// The daily audio digest — a spoken recap, not just a scripted demo mic
+// (UX plan, Section 5: "makes listening to audio a genuine daily habit").
+export const dailyDigest = {
+  script:
+    "Today, Eykon noticed six moments worth keeping — a Wi-Fi password on the whiteboard in Conference Room B, your keys on the hallway console table, and a grocery reminder on your way home. Nothing urgent needs your attention.",
+  durationSec: 18,
+  generatedAt: "2026-09-10T20:00:00",
+};
+
 // Connected device state
 export const glassesDevice = {
   connected: true,
@@ -258,6 +293,7 @@ export const glassesDevice = {
 
 export const phoneCaptureStats = {
   eventsToday: 6,
+  eventsThisWeek: 9,
   hoursActive: 9.5,
   storageUsedGb: 1.1,
 };

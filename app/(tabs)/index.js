@@ -218,9 +218,14 @@ export default function ChatScreen() {
             </Text>
           </View>
         </View>
-        <Pressable style={styles.iconButton} onPress={() => router.push("/(tabs)/glasses")} accessibilityLabel="Open Glasses hub">
-          <Ionicons name="glasses-outline" size={20} color={colors.textPrimary} />
-        </Pressable>
+        <View style={{ flexDirection: "row", gap: 8 }}>
+          <Pressable style={styles.iconButton} onPress={() => router.push("/live-lens")} accessibilityLabel="Open Live Lens">
+            <Ionicons name="eye-outline" size={20} color={colors.textPrimary} />
+          </Pressable>
+          <Pressable style={styles.iconButton} onPress={() => router.push("/(tabs)/glasses")} accessibilityLabel="Open Glasses hub">
+            <Ionicons name="glasses-outline" size={20} color={colors.textPrimary} />
+          </Pressable>
+        </View>
       </View>
 
       <FlatList

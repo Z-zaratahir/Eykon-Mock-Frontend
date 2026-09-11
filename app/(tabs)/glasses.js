@@ -182,10 +182,16 @@ export default function GlassesScreen() {
         </View>
       </View>
 
-      <Pressable style={styles.captureCta} onPress={() => router.push("/capture")}>
-        <Ionicons name="aperture-outline" size={18} color={colors.white} />
-        <Text style={styles.captureCtaText}>Capture a moment now</Text>
-      </Pressable>
+      <View style={styles.ctaRow}>
+        <Pressable style={styles.captureCta} onPress={() => router.push("/capture")}>
+          <Ionicons name="aperture-outline" size={18} color={colors.white} />
+          <Text style={styles.captureCtaText}>Capture a moment</Text>
+        </Pressable>
+        <Pressable style={styles.liveLensCta} onPress={() => router.push("/live-lens")}>
+          <Ionicons name="eye-outline" size={18} color={colors.tealDark} />
+          <Text style={styles.liveLensCtaText}>Live Lens</Text>
+        </Pressable>
+      </View>
     </ScrollView>
   );
 }
@@ -307,7 +313,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   pipelineLabel: { color: colors.textSecondary, fontSize: 10.5, fontWeight: "600" },
+  ctaRow: { flexDirection: "row", gap: 10, marginHorizontal: spacing.lg },
   captureCta: {
+    flex: 1,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
@@ -315,8 +323,19 @@ const styles = StyleSheet.create({
     backgroundColor: colors.teal,
     borderRadius: radius.pill,
     paddingVertical: 14,
-    marginHorizontal: spacing.lg,
     minHeight: 44,
   },
   captureCtaText: { color: colors.white, fontWeight: "700", fontSize: 14.5 },
+  liveLensCta: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+    backgroundColor: colors.tealTint,
+    borderRadius: radius.pill,
+    paddingVertical: 14,
+    minHeight: 44,
+  },
+  liveLensCtaText: { color: colors.tealDark, fontWeight: "700", fontSize: 14.5 },
 });

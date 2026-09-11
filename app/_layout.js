@@ -46,6 +46,9 @@ export default function RootLayout() {
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="memory/[id]" options={{ presentation: "card" }} />
         <Stack.Screen name="capture" options={{ presentation: "fullScreenModal", animation: "fade" }} />
+        <Stack.Screen name="live-lens" options={{ presentation: "fullScreenModal", animation: "fade" }} />
+        <Stack.Screen name="voice" options={{ presentation: "card" }} />
+        <Stack.Screen name="insights" options={{ presentation: "card" }} />
       </Stack>
     </GestureHandlerRootView>
   );

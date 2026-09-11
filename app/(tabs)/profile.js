@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, ScrollView, Pressable, Switch } from "react-nat
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { router } from "expo-router";
 import { colors, radius, spacing, type } from "../../constants/theme";
 import { retrievalStats, phoneCaptureStats } from "../../data/mockData";
 
@@ -91,6 +92,14 @@ export default function ProfileScreen() {
       </View>
 
       <View style={styles.section}>
+        <Text style={styles.sectionLabel}>More</Text>
+        <View style={styles.navCard}>
+          <NavRow icon="mic-outline" label="Voice & Sounds" desc="Record, replay, daily digest" onPress={() => router.push("/voice")} />
+          <NavRow icon="stats-chart-outline" label="Insights" desc="What Eykon's noticed lately" onPress={() => router.push("/insights")} last />
+        </View>
+      </View>
+
+      <View style={styles.section}>
         <Text style={styles.sectionLabel}>About</Text>
         <View style={styles.aboutCard}>
           <Row icon="git-branch-outline" label="Retrieval pipeline" value="Hybrid dense + BM25 + RRF" />
@@ -115,6 +124,21 @@ function ToggleRow({ icon, title, desc, value, onChange }) {
       </View>
       <Switch value={value} onValueChange={onChange} trackColor={{ false: colors.backgroundAlt, true: colors.tealDark }} thumbColor={colors.textPrimary} />
     </View>
+  );
+}
+
+function NavRow({ icon, label, desc, onPress, last }) {
+  return (
+    <Pressable onPress={onPress} style={[styles.navRow, !last && styles.aboutRowBorder]}>
+      <View style={styles.toggleIconWrap}>
+        <Ionicons name={icon} size={17} color={colors.teal} />
+      </View>
+      <View style={{ flex: 1 }}>
+        <Text style={styles.toggleTitle}>{label}</Text>
+        <Text style={styles.toggleDesc}>{desc}</Text>
+      </View>
+      <Ionicons name="chevron-forward" size={18} color={colors.textFaint} />
+    </Pressable>
   );
 }
 
@@ -175,6 +199,8 @@ const styles = StyleSheet.create({
   langChipActive: { backgroundColor: colors.teal, borderColor: colors.teal },
   langChipText: { color: colors.textSecondary, fontSize: 12, fontWeight: "700" },
   hintText: { color: colors.textFaint, fontSize: 11.5 },
+  navCard: { backgroundColor: colors.backgroundAlt, borderRadius: radius.lg, borderWidth: 1, borderColor: colors.hairline },
+  navRow: { flexDirection: "row", alignItems: "center", gap: spacing.sm, padding: spacing.md, minHeight: 44 },
   aboutCard: { backgroundColor: colors.backgroundAlt, borderRadius: radius.lg, padding: spacing.md, borderWidth: 1, borderColor: colors.hairline },
   aboutRow: { flexDirection: "row", alignItems: "center", gap: 10, paddingVertical: 10 },
   aboutRowBorder: { borderBottomWidth: 1, borderBottomColor: colors.hairline },
