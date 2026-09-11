@@ -28,7 +28,7 @@ export default function GlassesScreen() {
   const [source, setSource] = useState(device.connected ? "glasses" : "phone");
 
   const captureModes = [
-    { key: "continuous", label: "Continuous", desc: "Always watching, YOLO-gated" },
+    { key: "continuous", label: "Continuous", desc: "Always watching, only saves what matters" },
     { key: "standby", label: "Standby", desc: "Only on wake word or tap" },
     { key: "off", label: "Off", desc: "Glasses camera disabled" },
   ];
@@ -170,15 +170,15 @@ export default function GlassesScreen() {
       </View>
 
       <View style={styles.section}>
-        <Text style={styles.sectionLabel}>Pipeline health</Text>
+        <Text style={styles.sectionLabel}>System status</Text>
         <View style={styles.pipelineRow}>
           <PipelineStage icon="camera-outline" label="Capture" ok />
           <PipelineArrow />
-          <PipelineStage icon="scan-outline" label="YOLO" ok />
+          <PipelineStage icon="scan-outline" label="Detect" ok />
           <PipelineArrow />
-          <PipelineStage icon="albums-outline" label="Extract" ok />
+          <PipelineStage icon="albums-outline" label="Understand" ok />
           <PipelineArrow />
-          <PipelineStage icon="server-outline" label="Store" ok />
+          <PipelineStage icon="server-outline" label="Save" ok />
         </View>
       </View>
 

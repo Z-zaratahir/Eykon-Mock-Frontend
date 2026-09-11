@@ -234,15 +234,6 @@ export default function MemoryDetail() {
           ))}
         </View>
 
-        <Text style={styles.sectionLabel}>Memory record</Text>
-        <View style={styles.card}>
-          <Row label="Event ID" value={event.id} mono />
-          <Row label="Type" value={event.type} />
-          <Row label="Embedding space" value="bge-small-en-v1.5 · 384d" mono />
-          <Row label="Retrieval index" value="hybrid (dense + BM25 + RRF)" />
-          <Row label="Eviction status" value="Retained — pattern-matched as high-value" last />
-        </View>
-
         <View style={styles.privacyRow}>
           <Pressable style={styles.privacyAction} onPress={handlePin}>
             <Ionicons name={event.pinned ? "bookmark" : "bookmark-outline"} size={18} color={event.pinned ? colors.teal : colors.textSecondary} />
@@ -263,17 +254,6 @@ export default function MemoryDetail() {
           <Text style={styles.askButtonText}>Ask a follow-up about this</Text>
         </Pressable>
       </ScrollView>
-    </View>
-  );
-}
-
-function Row({ label, value, mono, last }) {
-  return (
-    <View style={[styles.row, !last && styles.rowBorder]}>
-      <Text style={styles.rowLabel}>{label}</Text>
-      <Text style={[styles.rowValue, mono && { fontFamily: "monospace" }]} numberOfLines={1}>
-        {value}
-      </Text>
     </View>
   );
 }
@@ -331,10 +311,6 @@ const styles = StyleSheet.create({
   transcriptLabel: { color: colors.textFaint, fontSize: 13, fontWeight: "700", textTransform: "uppercase", marginBottom: 4 },
   transcriptText: { color: colors.textPrimary, ...type.body },
   tagWrap: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
-  row: { flexDirection: "row", justifyContent: "space-between", paddingVertical: 10, gap: 12 },
-  rowBorder: { borderBottomWidth: 1, borderBottomColor: colors.hairline },
-  rowLabel: { color: colors.textSecondary, fontSize: 13 },
-  rowValue: { color: colors.textPrimary, fontSize: 13, flexShrink: 1, textAlign: "right" },
   privacyRow: { flexDirection: "row", gap: 8, marginTop: spacing.lg },
   privacyAction: {
     flex: 1,

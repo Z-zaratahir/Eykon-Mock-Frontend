@@ -4,7 +4,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { router } from "expo-router";
 import { colors, radius, spacing, type } from "../../constants/theme";
-import { memoryEvents, EVENT_TYPES, TYPE_META, retrievalStats } from "../../data/mockData";
+import { memoryEvents, EVENT_TYPES, TYPE_META, phoneCaptureStats } from "../../data/mockData";
 
 const FILTERS = [
   { key: "all", label: "All", icon: "apps-outline" },
@@ -201,6 +201,7 @@ export default function EchoesScreen() {
   }, [filter, query]);
 
   const sections = useMemo(() => groupByDay(filtered), [filtered]);
+  const pinnedCount = useMemo(() => memoryEvents.filter((e) => e.pinned).length, []);
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.background }}>
@@ -215,12 +216,12 @@ export default function EchoesScreen() {
             <Text style={styles.statLabel}>moments</Text>
           </View>
           <View style={styles.statChip}>
-            <Text style={styles.statNumber}>{retrievalStats.hitAt5}%</Text>
-            <Text style={styles.statLabel}>Hit@5</Text>
+            <Text style={styles.statNumber}>{phoneCaptureStats.eventsThisWeek}</Text>
+            <Text style={styles.statLabel}>this week</Text>
           </View>
           <View style={styles.statChip}>
-            <Text style={styles.statNumber}>{retrievalStats.avgLatencyMs}ms</Text>
-            <Text style={styles.statLabel}>avg recall</Text>
+            <Text style={styles.statNumber}>{pinnedCount}</Text>
+            <Text style={styles.statLabel}>pinned</Text>
           </View>
         </View>
 

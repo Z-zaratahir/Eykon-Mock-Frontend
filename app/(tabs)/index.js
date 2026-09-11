@@ -17,7 +17,6 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as Haptics from "expo-haptics";
 import { router, useLocalSearchParams } from "expo-router";
 import { colors, radius, spacing, type } from "../../constants/theme";
-import { Badge } from "../../components/ui";
 import { TAB_BAR_CLEARANCE } from "../../components/TabBar";
 import { chatMessages as initialMessages, suggestedPrompts, memoryEvents, glassesDevice } from "../../data/mockData";
 
@@ -30,47 +29,24 @@ function findEvent(id) {
   return memoryEvents.find((e) => e.id === id);
 }
 
-function matchTone(key) {
-  if (key === "exact") return "exact";
-  if (key === "bm25") return "keyword";
-  return "semantic";
-}
-
-// Kept and extended, not removed (see build brief — this is a defensible,
-// demoable feature for the defense). But the UX plan is explicit that terms
-// like "Hit@1"/raw latency are "great for defense slides, wrong for the
-// actual UI" and belong behind an expandable detail, not the default text —
-// the collapsed row now reads in plain language; the jargon only shows up
-// once someone deliberately taps "Details".
+// Kept, not removed (build brief says keep the citation feature) — but
+// stripped down to what a real user actually gets value from: which memory
+// an answer came from, tappable to go look at it. No retrieval-system
+// vocabulary (Hit@1, latency, match-type) belongs in front of a general
+// user by default — that was internal project-understanding context, not
+// intended UI copy.
 function RetrievalTrace({ retrieval }) {
-  const [open, setOpen] = useState(false);
-  if (!retrieval) return null;
+  if (!retrieval || !retrieval.sources?.length) return null;
   return (
     <View style={styles.trace}>
-      <Pressable onPress={() => setOpen((o) => !o)} style={styles.traceRow} hitSlop={6}>
-        <Ionicons name={retrieval.hitAt1 ? "checkmark-circle" : "search-outline"} size={13} color={colors.success} />
-        <Text style={styles.traceText}>{retrieval.hitAt1 ? "Found it" : "Possible match"}</Text>
-        <Text style={styles.traceLink}>{open ? "Hide details" : "Details"}</Text>
-        <Ionicons name={open ? "chevron-up" : "chevron-down"} size={12} color={colors.tealDark} />
-      </Pressable>
-      {open && (
-        <View style={styles.traceDetail}>
-          <View style={styles.traceDetailRow}>
-            <Ionicons name="flash-outline" size={12} color={colors.textFaint} />
-            <Text style={styles.traceDetailText}>{retrieval.latencyMs}ms retrieval</Text>
-            {retrieval.hitAt1 ? <Badge label="Hit@1" tone="exact" small /> : null}
-          </View>
-          {retrieval.sources.map((s) => (
-            <Pressable key={s.eventId} onPress={() => router.push(`/memory/${s.eventId}`)} style={styles.sourceChip}>
-              <Ionicons name="albums-outline" size={13} color={colors.teal} />
-              <Text style={styles.sourceChipText} numberOfLines={1}>
-                {s.title}
-              </Text>
-              <Badge label={s.match.label} tone={matchTone(s.match.key)} small />
-            </Pressable>
-          ))}
-        </View>
-      )}
+      {retrieval.sources.map((s) => (
+        <Pressable key={s.eventId} onPress={() => router.push(`/memory/${s.eventId}`)} style={styles.sourceChip}>
+          <Ionicons name="albums-outline" size={13} color={colors.teal} />
+          <Text style={styles.sourceChipText} numberOfLines={1}>
+            Based on: {s.title}
+          </Text>
+        </Pressable>
+      ))}
     </View>
   );
 }
@@ -427,12 +403,6 @@ const styles = StyleSheet.create({
   thinkingBubble: { paddingVertical: 14 },
   timeText: { color: colors.textFaint, fontSize: 13, marginTop: 4, marginLeft: 4 },
   trace: { marginTop: 6, gap: 6 },
-  traceRow: { flexDirection: "row", alignItems: "center", gap: 6, paddingVertical: 2 },
-  traceText: { color: colors.textSecondary, fontSize: 13, fontWeight: "600" },
-  traceLink: { color: colors.tealDark, fontSize: 13, fontWeight: "700" },
-  traceDetail: { gap: 6, marginTop: 2 },
-  traceDetailRow: { flexDirection: "row", alignItems: "center", gap: 6 },
-  traceDetailText: { color: colors.textFaint, fontSize: 13 },
   sourceChip: {
     flexDirection: "row",
     alignItems: "center",

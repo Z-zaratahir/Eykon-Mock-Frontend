@@ -5,7 +5,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { router } from "expo-router";
 import { colors, radius, spacing, type } from "../../constants/theme";
-import { retrievalStats, phoneCaptureStats } from "../../data/mockData";
+import { memoryEvents, phoneCaptureStats } from "../../data/mockData";
 
 export default function ProfileScreen() {
   const insets = useSafeAreaInsets();
@@ -37,12 +37,12 @@ export default function ProfileScreen() {
 
       <View style={styles.statsGrid}>
         <View style={styles.statBox}>
-          <Text style={styles.statBoxNumber}>{retrievalStats.memoriesStored}</Text>
+          <Text style={styles.statBoxNumber}>{memoryEvents.length}</Text>
           <Text style={styles.statBoxLabel}>memories stored</Text>
         </View>
         <View style={styles.statBox}>
-          <Text style={styles.statBoxNumber}>{retrievalStats.hitAt1}%</Text>
-          <Text style={styles.statBoxLabel}>Hit@1 accuracy</Text>
+          <Text style={styles.statBoxNumber}>{memoryEvents.filter((e) => e.pinned).length}</Text>
+          <Text style={styles.statBoxLabel}>pinned</Text>
         </View>
         <View style={styles.statBox}>
           <Text style={styles.statBoxNumber}>{phoneCaptureStats.hoursActive}h</Text>
@@ -98,16 +98,6 @@ export default function ProfileScreen() {
           <NavRow icon="stats-chart-outline" label="Insights" desc="What Eykon's noticed lately" onPress={() => router.push("/insights")} last />
         </View>
       </View>
-
-      <View style={styles.section}>
-        <Text style={styles.sectionLabel}>About</Text>
-        <View style={styles.aboutCard}>
-          <Row icon="git-branch-outline" label="Retrieval pipeline" value="Hybrid dense + BM25 + RRF" />
-          <Row icon="hardware-chip-outline" label="On-device LLM" value="llama.cpp via Termux" />
-          <Row icon="eye-outline" label="Vision model" value="Moondream (baseline)" />
-          <Row icon="git-network-outline" label="Version" value="0.4.0 — FYP prototype" last />
-        </View>
-      </View>
     </ScrollView>
   );
 }
@@ -139,16 +129,6 @@ function NavRow({ icon, label, desc, onPress, last }) {
       </View>
       <Ionicons name="chevron-forward" size={18} color={colors.textFaint} />
     </Pressable>
-  );
-}
-
-function Row({ icon, label, value, last }) {
-  return (
-    <View style={[styles.aboutRow, !last && styles.aboutRowBorder]}>
-      <Ionicons name={icon} size={15} color={colors.textSecondary} />
-      <Text style={styles.aboutLabel}>{label}</Text>
-      <Text style={styles.aboutValue}>{value}</Text>
-    </View>
   );
 }
 
@@ -201,9 +181,5 @@ const styles = StyleSheet.create({
   hintText: { color: colors.textFaint, fontSize: 13 },
   navCard: { backgroundColor: colors.backgroundAlt, borderRadius: radius.lg, borderWidth: 1, borderColor: colors.hairline },
   navRow: { flexDirection: "row", alignItems: "center", gap: spacing.sm, padding: spacing.md, minHeight: 44 },
-  aboutCard: { backgroundColor: colors.backgroundAlt, borderRadius: radius.lg, padding: spacing.md, borderWidth: 1, borderColor: colors.hairline },
-  aboutRow: { flexDirection: "row", alignItems: "center", gap: 10, paddingVertical: 10 },
   aboutRowBorder: { borderBottomWidth: 1, borderBottomColor: colors.hairline },
-  aboutLabel: { color: colors.textSecondary, fontSize: 13, flex: 1 },
-  aboutValue: { color: colors.textPrimary, fontSize: 13, fontWeight: "600" },
 });
