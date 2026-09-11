@@ -32,15 +32,18 @@ export default function CaptureModal() {
   const dismissRef = useRef(null);
 
   // Pinch-to-zoom — undocumented on purpose, no slider/UI, just the gesture.
+  // Committed only on release (not on every onUpdate frame): the native
+  // camera has to reconfigure its session on each zoom change, and driving
+  // that continuously at gesture-frame rate (~60/s) is enough to crash the
+  // camera hardware outright on some Android devices — this showed up as a
+  // hard native crash straight back to the home screen, not a JS error.
   const [zoom, setZoom] = useState(0);
   const baseZoom = useSharedValue(0);
-  const pinchGesture = Gesture.Pinch()
-    .onUpdate((e) => {
-      runOnJS(setZoom)(clamp(baseZoom.value + (e.scale - 1) * 0.5, 0, 1));
-    })
-    .onEnd((e) => {
-      baseZoom.value = clamp(baseZoom.value + (e.scale - 1) * 0.5, 0, 1);
-    });
+  const pinchGesture = Gesture.Pinch().onEnd((e) => {
+    const next = clamp(baseZoom.value + (e.scale - 1) * 0.5, 0, 1);
+    baseZoom.value = next;
+    runOnJS(setZoom)(next);
+  });
   const pulse = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
